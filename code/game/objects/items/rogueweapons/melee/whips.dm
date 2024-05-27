@@ -1,5 +1,5 @@
 /obj/item/rogueweapon/whip
-	force = 21
+	force = 19
 	possible_item_intents = list(/datum/intent/whip/crack, /datum/intent/whip/lash)
 	name = "whip"
 	desc = "A leather whip, built to last with an sharp stone for a tip"
@@ -29,7 +29,7 @@
 
 
 /obj/item/rogueweapon/whip/antique
-	force = 29
+	force = 24
 	name = "Repenta En"
 	desc = "An extremely well maintained whip, with a polished steel tip and gilded handle"
 	minstr = 11
