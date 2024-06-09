@@ -52,8 +52,10 @@
 /datum/supply_pack/rogue/rawmats/silk
 	name = "Silk"
 	cost = 50
-	contains = list(/obj/item/rogueore/iron,
-	/obj/item/rogueore/iron,
-	/obj/item/rogueore/iron,
-	/obj/item/rogueore/iron,
-	/obj/item/rogueore/iron)
+	contains = list(/obj/item/natural/silk,
+	/obj/item/natural/silk,
+	/obj/item/natural/silk,
+	/obj/item/natural/silk,
+	/obj/item/natural/silk,
+	/obj/item/natural/silk,
+	/obj/item/natural/silk)
