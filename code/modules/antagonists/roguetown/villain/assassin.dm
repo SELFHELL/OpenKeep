@@ -7,7 +7,12 @@
 	antag_hud_type = ANTAG_HUD_TRAITOR
 	antag_hud_name = "villain"
 	var/special_role = ROLE_VILLAIN
-	confess_lines = list("I gave the lady no time to squeal.", "I am down on whores.", "I shant quit ripping them.")
+	confess_lines = list(
+		"I gave them no time to squeal.",
+		"I shant quit ripping them.",
+		"They deserve to be put at my blade.",
+		"Do what thou wilt shall be the whole of the law.",
+	)
 
 /datum/antagonist/villain/on_gain()
 	owner.special_role = "Maniac"
@@ -22,9 +27,9 @@
 		H.cmode_music = 'sound/music/combat_weird.ogg'
 		owner.adjust_skillrank(/datum/skill/combat/knives, 6, TRUE)
 		ADD_TRAIT(H, TRAIT_STEELHEARTED, TRAIT_GENERIC)
-		ADD_TRAIT(H, RTRAIT_NOSTINK, TRAIT_GENERIC)
-		ADD_TRAIT(H, RTRAIT_HATEWOMEN, TRAIT_GENERIC)
-		ADD_TRAIT(H, RTRAIT_VILLAIN, TRAIT_GENERIC)
+		ADD_TRAIT(H, TRAIT_NOSTINK, TRAIT_GENERIC)
+		ADD_TRAIT(H, TRAIT_HATEWOMEN, TRAIT_GENERIC)
+		ADD_TRAIT(H, TRAIT_VILLAIN, TRAIT_GENERIC)
 	forge_villain_objectives()
 	finalize_villain()
 	return ..()

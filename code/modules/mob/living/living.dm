@@ -11,16 +11,10 @@
 		diag_hud.add_to_hud(src)
 	faction += "[REF(src)]"
 	GLOB.mob_living_list += src
-
-/mob/living/prepare_huds()
-	..()
-	prepare_data_huds()
-
-/mob/living/proc/prepare_data_huds()
-	med_hud_set_health()
-	med_hud_set_status()
+	init_faith()
 
 /mob/living/Destroy()
+	surgeries = null
 	if(LAZYLEN(status_effects))
 		for(var/s in status_effects)
 			var/datum/status_effect/S = s
@@ -47,6 +41,14 @@
 		S.removeSoulsharer(src) //If a sharer is destroy()'d, they are simply removed
 	sharedSoullinks = null
 	return ..()
+
+/mob/living/prepare_huds()
+	..()
+	prepare_data_huds()
+
+/mob/living/proc/prepare_data_huds()
+	med_hud_set_health()
+	med_hud_set_status()
 
 /mob/living/onZImpact(turf/T, levels)
 	var/points
@@ -321,10 +323,10 @@
 			if(I.wlength > WLENGTH_NORMAL)
 				CZ = TRUE
 			else //we have a short/medium weapon, so allow hitting legs
-				acceptable = list(BODY_ZONE_HEAD, BODY_ZONE_R_ARM, BODY_ZONE_CHEST, BODY_ZONE_PRECISE_GROIN, BODY_ZONE_PRECISE_STOMACH, BODY_ZONE_PRECISE_R_HAND, BODY_ZONE_PRECISE_L_HAND, BODY_ZONE_L_ARM, BODY_ZONE_PRECISE_NECK, BODY_ZONE_PRECISE_R_EYE,BODY_ZONE_PRECISE_L_EYE, BODY_ZONE_PRECISE_EARS, BODY_ZONE_R_LEG, BODY_ZONE_L_LEG, BODY_ZONE_PRECISE_HAIR, BODY_ZONE_PRECISE_NOSE, BODY_ZONE_PRECISE_MOUTH)
+				acceptable = list(BODY_ZONE_HEAD, BODY_ZONE_R_ARM, BODY_ZONE_CHEST, BODY_ZONE_PRECISE_GROIN, BODY_ZONE_PRECISE_STOMACH, BODY_ZONE_PRECISE_R_HAND, BODY_ZONE_PRECISE_L_HAND, BODY_ZONE_L_ARM, BODY_ZONE_PRECISE_NECK, BODY_ZONE_PRECISE_R_EYE,BODY_ZONE_PRECISE_L_EYE, BODY_ZONE_PRECISE_EARS, BODY_ZONE_R_LEG, BODY_ZONE_L_LEG, BODY_ZONE_PRECISE_SKULL, BODY_ZONE_PRECISE_NOSE, BODY_ZONE_PRECISE_MOUTH)
 		else
 			if(!CZ) //we are punching, no legs
-				acceptable = list(BODY_ZONE_HEAD, BODY_ZONE_R_ARM, BODY_ZONE_CHEST, BODY_ZONE_PRECISE_GROIN, BODY_ZONE_PRECISE_STOMACH, BODY_ZONE_PRECISE_R_HAND, BODY_ZONE_PRECISE_L_HAND, BODY_ZONE_L_ARM, BODY_ZONE_PRECISE_NECK, BODY_ZONE_PRECISE_R_EYE,BODY_ZONE_PRECISE_L_EYE, BODY_ZONE_PRECISE_EARS, BODY_ZONE_PRECISE_HAIR, BODY_ZONE_PRECISE_NOSE, BODY_ZONE_PRECISE_MOUTH)
+				acceptable = list(BODY_ZONE_HEAD, BODY_ZONE_R_ARM, BODY_ZONE_CHEST, BODY_ZONE_PRECISE_GROIN, BODY_ZONE_PRECISE_STOMACH, BODY_ZONE_PRECISE_R_HAND, BODY_ZONE_PRECISE_L_HAND, BODY_ZONE_L_ARM, BODY_ZONE_PRECISE_NECK, BODY_ZONE_PRECISE_R_EYE,BODY_ZONE_PRECISE_L_EYE, BODY_ZONE_PRECISE_EARS, BODY_ZONE_PRECISE_SKULL, BODY_ZONE_PRECISE_NOSE, BODY_ZONE_PRECISE_MOUTH)
 	else if(!(L.mobility_flags & MOBILITY_STAND) && (mobility_flags & MOBILITY_STAND)) //we are prone, victim is standing
 		if(I)
 			if(I.wlength > WLENGTH_NORMAL)
@@ -404,8 +406,8 @@
 			var/mob/living/carbon/C = M
 			var/obj/item/grabbing/O = new()
 			var/used_limb = C.find_used_grab_limb(src)
-			O.name = "[C]'s [used_limb]"
-			var/obj/item/bodypart/BP = C.get_bodypart(check_zone(zone_selected))
+			O.name = "[C]'s [parse_zone(used_limb)]"
+			var/obj/item/bodypart/BP = C.get_bodypart(check_zone(used_limb))
 			C.grabbedby += O
 			O.grabbed = C
 			O.grabbee = src
@@ -427,7 +429,10 @@
 			O.name = "[M.name]"
 			O.grabbed = M
 			O.grabbee = src
-			O.sublimb_grabbed = M.simple_limb_hit(zone_selected)
+			if(item_override)
+				O.sublimb_grabbed = item_override
+			else
+				O.sublimb_grabbed = M.simple_limb_hit(zone_selected)
 			put_in_hands(O)
 			O.update_hands(src)
 			if(HAS_TRAIT(src, TRAIT_STRONG_GRABBER) || item_override)
@@ -757,8 +762,8 @@
 			for(var/S in mind.spell_list)
 				var/obj/effect/proc_holder/spell/spell = S
 				spell.updateButtonIcon()
-			if(mind.has_antag_datum(/datum/antagonist/zombie))
-				mind.remove_antag_datum(/datum/antagonist/zombie)
+			mind.remove_antag_datum(/datum/antagonist/zombie)
+
 /mob/living/proc/remove_CC(should_update_mobility = TRUE)
 	SetStun(0, FALSE)
 	SetKnockdown(0, FALSE)
@@ -798,6 +803,11 @@
 	cure_husk()
 	hallucination = 0
 	heal_overall_damage(INFINITY, INFINITY, INFINITY, null, TRUE) //heal brute and burn dmg on both organic and robotic limbs, and update health right away.
+	for(var/datum/wound/wound as anything in get_wounds())
+		if(admin_revive)
+			qdel(wound)
+		else
+			wound.heal_wound(wound.whp)
 	ExtinguishMob()
 	fire_stacks = 0
 	confused = 0
@@ -1068,26 +1078,24 @@
 /mob/living/resist_grab(moving_resist)
 	. = TRUE
 
+	var/wrestling_diff = 0
 	var/resist_chance = 50
 	var/mob/living/L = pulledby
-	if(pulledby.grab_state >= GRAB_AGGRESSIVE)
-		resist_chance -= 25
-	var/diffy = STASTR - L.STASTR
-	if(diffy > 0)
-		resist_chance = 50 + (diffy * 25)
-//		if(!L.rogfat_add(diffy * 10)) //hard to keep a grip on them
-//			resist_chance = 100
-	if(diffy < 0)
-		resist_chance = 50 - (diffy * 25)
-	if(L.mind)
-		resist_chance -= (L.mind.get_skill_level(/datum/skill/combat/wrestling) * 10)
+
 	if(mind)
-		resist_chance += (mind.get_skill_level(/datum/skill/combat/wrestling) * 10)
+		wrestling_diff += (mind.get_skill_level(/datum/skill/combat/wrestling)) //NPCs don't use this
+	if(L.mind)
+		wrestling_diff -= (L.mind.get_skill_level(/datum/skill/combat/wrestling))
+
+	resist_chance += ((STACON - L.STACON) * 10)
 
 	if(!(mobility_flags & MOBILITY_STAND))
-		resist_chance -= 20
-
-	resist_chance = max(resist_chance, 1)
+		resist_chance += -20 + min((wrestling_diff * 5), -20) //Can improve resist chance at high skill difference     
+	if(pulledby.grab_state >= GRAB_AGGRESSIVE)
+		resist_chance += -20 + max((wrestling_diff * 10), 0) 
+		resist_chance = max(resist_chance, 50 + min((wrestling_diff * 5), 0))
+	else
+		resist_chance = max(resist_chance, 70 + min((wrestling_diff * 5), 0))
 
 
 	if(moving_resist && client) //we resisted by trying to move
@@ -1115,17 +1123,7 @@
 	var/mob/living/L = pulledby
 	if(ishuman(L))
 		var/mob/living/carbon/human/H = L
-		if((H.age != AGE_YOUNG) && (age == AGE_YOUNG))
-			var/obj/item/bodypart/head = get_bodypart(BODY_ZONE_HEAD)
-			for(var/obj/item/grabbing/G in grabbedby)
-				if(G.limb_grabbed == head)
-					if(G.grabbee == pulledby)
-						if(G.sublimb_grabbed == BODY_ZONE_PRECISE_EARS)
-							visible_message("<span class='warning'>[src] struggles to break free from [pulledby]'s grip!</span>", \
-											"<span class='warning'>I struggle against [pulledby]'s grip!</span>", null, null, pulledby)
-							to_chat(pulledby, "<span class='warning'>[src] struggles against my grip!</span>")
-							return FALSE
-		if(HAS_TRAIT(H, RTRAIT_NOSEGRAB))
+		if(HAS_TRAIT(H, TRAIT_NOSEGRAB) && !HAS_TRAIT(src, TRAIT_MISSING_NOSE))
 			var/obj/item/bodypart/head = get_bodypart(BODY_ZONE_HEAD)
 			for(var/obj/item/grabbing/G in grabbedby)
 				if(G.limb_grabbed == head)
@@ -1823,6 +1821,8 @@
 			if(M == src)
 				continue
 			if(see_invisible < M.invisibility)
+				continue
+			if(M.mob_timers[MT_INVISIBILITY] > world.time) // Check if the mob is affected by the invisibility spell
 				continue
 			var/probby = 3 * STAPER
 			if(M.mind)

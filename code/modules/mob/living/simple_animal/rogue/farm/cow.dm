@@ -1,7 +1,7 @@
 
 /mob/living/simple_animal/hostile/retaliate/rogue/cow
 	icon = 'icons/roguetown/mob/monster/cow.dmi'
-	name = "cow"
+	name = "moo-beast"
 	desc = ""
 	icon_state = "cow"
 	icon_living = "cow"
@@ -37,6 +37,7 @@
 	STASTR = 4
 	childtype = list(/mob/living/simple_animal/hostile/retaliate/rogue/cow/cowlet = 95, /mob/living/simple_animal/hostile/retaliate/rogue/cow/bullet = 5)
 	remains_type = /obj/effect/decal/remains/cow
+
 
 /obj/effect/decal/remains/cow
 	name = "remains"
@@ -94,7 +95,7 @@
 			return "snout"
 		if(BODY_ZONE_PRECISE_MOUTH)
 			return "snout"
-		if(BODY_ZONE_PRECISE_HAIR)
+		if(BODY_ZONE_PRECISE_SKULL)
 			return "head"
 		if(BODY_ZONE_PRECISE_EARS)
 			return "head"
@@ -138,7 +139,7 @@
 
 /mob/living/simple_animal/hostile/retaliate/rogue/bull
 	icon = 'icons/roguetown/mob/monster/cow.dmi'
-	name = "cow"
+	name = "moo-beast bull"
 	icon_state = "bull"
 	icon_living = "bull"
 	icon_dead = "bull_dead"
@@ -202,7 +203,7 @@
 			return "snout"
 		if(BODY_ZONE_PRECISE_MOUTH)
 			return "snout"
-		if(BODY_ZONE_PRECISE_HAIR)
+		if(BODY_ZONE_PRECISE_SKULL)
 			return "head"
 		if(BODY_ZONE_PRECISE_EARS)
 			return "head"

@@ -1,6 +1,6 @@
-/datum/advclass/weaver
+/datum/advclass/pilgrim/weaver
 	name = "Weaver"
-	allowed_sexes = list("Male", "female")
+	allowed_sexes = list(MALE, FEMALE)
 	allowed_races = list("Humen",
 	"Elf",
 	"Half-Elf",
@@ -9,9 +9,7 @@
 	"Aasimar"
 	)
 	outfit = /datum/outfit/job/roguetown/adventurer/seamstress
-	isvillager = TRUE
-	ispilgrim = FALSE
-	maxchosen = 1
+	category_tags = list(CTAG_PILGRIM, CTAG_TOWNER)
 
 /datum/outfit/job/roguetown/adventurer/seamstress/pre_equip(mob/living/carbon/human/H)
 	..()

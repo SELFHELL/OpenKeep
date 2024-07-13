@@ -10,6 +10,8 @@
 	duration = 100
 
 /atom/movable/screen/alert/status_effect/debuff/hungryt1
+	name = "Peckish, stomach growling"
+	desc = "<span class='warning'>I am getting hungry.</span>\n"
 	icon_state = "hunger1"
 
 /datum/status_effect/debuff/hungryt1/on_apply()
@@ -70,7 +72,44 @@
 		var/mob/living/carbon/C = owner
 		C.remove_stress(/datum/stressevent/starving)
 
+//SILVER DAGGER EFFECT
+
+/datum/status_effect/debuff/silver_curse
+	id = "silver_curse"
+	alert_type = /atom/movable/screen/alert/status_effect/debuff/silver_curse
+	duration = 5 SECONDS
+
+/atom/movable/screen/alert/status_effect/debuff/silver_curse
+	name = "Silver Curse"
+	desc = "My BANE!"
+	icon_state = "hunger3"
+
+
+//BROKEN CELIBACY
+
+/datum/status_effect/debuff/chastity
+	id = "chastity"
+	alert_type = /atom/movable/screen/alert/status_effect/debuff/chastity
+	effectedstats = list("fortune" = -6)
+	duration = 999 MINUTES
+
+/atom/movable/screen/alert/status_effect/debuff/chastity
+	name = "Pantheons Curse"
+	desc = "I have broken my oath of celibacy... what have I done"
+	icon_state = "hunger3"
+
+/datum/status_effect/debuff/wiz
+	id = "wiz"
+	alert_type = /atom/movable/screen/alert/status_effect/debuff/wiz
+	effectedstats = list("intelligence" = -5)
+	duration = 999 MINUTES
+
+/atom/movable/screen/alert/status_effect/debuff/wiz
+	name = "Fading Power"
+	desc = "My magical power wanes as I defile my body"
+	icon_state = "hunger3"
 ////////////////////
+
 
 /datum/status_effect/debuff/thirstyt1
 	id = "thirsty1"

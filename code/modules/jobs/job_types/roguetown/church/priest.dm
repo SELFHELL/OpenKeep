@@ -15,7 +15,7 @@
 		"Dwarf",
 		"Aasimar"
 	)
-	allowed_patrons = list("Astrata")
+	allowed_patrons = list(/datum/patron/divine/astrata)
 	tutorial = "The Divine is all that matters in a world of the immoral. The Weeping god left his children to rule over us mortals and you will preach their wisdom to any who still heed their will. The faithless are growing in number, it is up to you to shepard them to a God-Fearing future."
 	whitelist_req = FALSE
 	bypass_lastclass = TRUE
@@ -24,6 +24,7 @@
 	display_order = JDO_PRIEST
 	give_bank_account = 115
 	min_pq = -4
+	selection_color = "#c2a45d"
 
 /datum/outfit/job/roguetown/priest/pre_equip(mob/living/carbon/human/H)
 	..()
@@ -36,11 +37,12 @@
 	shirt = /obj/item/clothing/suit/roguetown/shirt/undershirt/priest
 	pants = /obj/item/clothing/under/roguetown/tights/black
 	shoes = /obj/item/clothing/shoes/roguetown/shortboots
-	beltl = /obj/item/roguekey/church
+	beltl = /obj/item/keyring/priest
 	belt = /obj/item/storage/belt/rogue/leather/rope
 	beltr = /obj/item/storage/belt/rogue/pouch/coins/rich
 	id = /obj/item/clothing/ring/active/nomag
 	armor = /obj/item/clothing/suit/roguetown/shirt/robe/priest
+	backl = /obj/item/storage/backpack/rogue/satchel
 	if(H.mind)
 		H.mind.adjust_skillrank(/datum/skill/misc/reading, 5, TRUE)
 		H.mind.adjust_skillrank(/datum/skill/magic/holy, 5, TRUE)
@@ -54,12 +56,15 @@
 		H.change_stat("constitution", -2)
 		H.change_stat("endurance", 1)
 		H.change_stat("speed", -2)
-	var/datum/devotion/cleric_holder/C = new /datum/devotion/cleric_holder(H, H.PATRON) // This creates the cleric holder used for devotion spells
+	var/datum/devotion/cleric_holder/C = new /datum/devotion/cleric_holder(H, H.patron) // This creates the cleric holder used for devotion spells
 	C.holder_mob = H
 	H.verbs += list(/mob/living/carbon/human/proc/devotionreport, /mob/living/carbon/human/proc/clericpray)
 	C.grant_spells_priest(H)
 
-//	ADD_TRAIT(H, RTRAIT_NOBLE, TRAIT_GENERIC)
+	H.verbs |= /mob/living/carbon/human/proc/coronate_lord
+	H.verbs |= /mob/living/carbon/human/proc/churchexcommunicate
+	H.verbs |= /mob/living/carbon/human/proc/churchannouncement
+//	ADD_TRAIT(H, TRAIT_NOBLE, TRAIT_GENERIC)
 //		H.underwear = "Femleotard"
 //		H.underwear_color = CLOTHING_BLACK
 //		H.update_body()

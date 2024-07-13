@@ -9,6 +9,8 @@
 	dynamic_hair_suffix = "+generic"
 	bloody_icon_state = "helmetblood"
 	experimental_onhip = TRUE
+	var/will_cover // used for avoiding issues when worn on hip, currently only helmets
+	var/will_hide
 
 /obj/item/clothing/head/roguetown/equipped(mob/user, slot)
 	. = ..()
@@ -63,6 +65,22 @@
 	toggle_icon_state = TRUE
 	max_integrity = 100
 
+/obj/item/clothing/head/roguetown/roguehood/nochood
+	name = "moon hood"
+	desc = ""
+	color = null
+	icon_state = "nochood"
+	item_state = "nochood"
+	icon = 'icons/roguetown/clothing/head.dmi'
+	body_parts_covered = NECK
+	slot_flags = ITEM_SLOT_HEAD
+	flags_inv = HIDEFACE|HIDEFACIALHAIR
+	dynamic_hair_suffix = ""
+	edelay_type = 1
+	adjustable = CAN_CADJUST
+	toggle_icon_state = TRUE
+	max_integrity = 100
+
 /obj/item/clothing/head/roguetown/necrahood
 	name = "death shroud"
 	color = null
@@ -77,6 +95,17 @@
 	icon_state = "dendormask"
 	item_state = "dendormask"
 	flags_inv = HIDEFACE|HIDEFACIALHAIR
+	dynamic_hair_suffix = ""
+
+/obj/item/clothing/head/roguetown/eoramask
+	name = "eoran mask"
+	color = null
+	icon_state = "eoramask"
+	item_state = "eoramask"
+	mob_overlay_icon = 'icons/roguetown/clothing/onmob/64x64/head.dmi'
+	worn_x_dimension = 64
+	worn_y_dimension = 64
+	flags_inv = HIDEFACE|HIDEFACIALHAIR|HIDEHAIR
 	dynamic_hair_suffix = ""
 
 /obj/item/clothing/head/roguetown/priestmask
@@ -157,7 +186,7 @@
 	name = "buckled hat"
 	icon_state = "puritan_hat"
 
-/obj/item/clothing/head/roguetown/nightman
+/obj/item/clothing/head/roguetown/niteman
 	name = "teller's hat"
 	icon_state = "tophat"
 	color = CLOTHING_BLACK
@@ -318,31 +347,40 @@
 	slot_flags = ITEM_SLOT_HEAD|ITEM_SLOT_HIP
 	name = "helmet"
 	desc = ""
-	body_parts_covered = HEAD|HAIR|NOSE
+	will_cover = HEAD|HAIR|NOSE
 	icon_state = "nasal"
 	sleevetype = null
 	sleeved = null
 	armor = list("melee" = 100, "bullet" = 100, "laser" = 0,"energy" = 0, "bomb" = 0, "bio" = 0, "rad" = 0, "fire" = 0, "acid" = 0)
-	prevent_crits = list(BCLASS_CUT, BCLASS_CHOP, BCLASS_BLUNT)
+	prevent_crits = list(BCLASS_CUT, BCLASS_CHOP, BCLASS_BLUNT, BCLASS_TWIST)
 	dynamic_hair_suffix = "+generic"
 	bloody_icon_state = "helmetblood"
 	anvilrepair = /datum/skill/craft/armorsmithing
 	blocksound = PLATEHIT
 	max_integrity = 200
 
+/obj/item/clothing/head/roguetown/helmet/equipped(mob/user, slot)
+	. = ..()
+	if(slot == SLOT_HEAD)
+		body_parts_covered = (will_cover)
+		flags_inv = (will_hide)
+	else
+		body_parts_covered = null
+		flags_inv = FALSE
+
 
 /obj/item/clothing/head/roguetown/helmet/skullcap
 	name = "skull cap"
 	desc = ""
 	icon_state = "skullcap"
-	body_parts_covered = HEAD|HAIR
+	will_cover = HEAD|HAIR
 	max_integrity = 200
 
 /obj/item/clothing/head/roguetown/helmet/horned
 	name = "horned cap"
 	icon_state = "hornedcap"
 	max_integrity = 200
-	body_parts_covered = HEAD|HAIR
+	will_cover = HEAD|HAIR
 
 /obj/item/clothing/head/roguetown/helmet/winged
 	name = "winged cap"
@@ -351,31 +389,32 @@
 	mob_overlay_icon = 'icons/roguetown/clothing/onmob/64x64/head.dmi'
 	worn_x_dimension = 64
 	worn_y_dimension = 64
-	body_parts_covered = HEAD|HAIR
+	will_cover = HEAD|HAIR
 
 /obj/item/clothing/head/roguetown/helmet/kettle
 	desc = "A steel helmet which protects the ears."
 	icon_state = "kettle"
-	body_parts_covered = HEAD|HAIR|EARS
+	will_cover = HEAD|HAIR|EARS
 	armor = list("melee" = 100, "bullet" = 100, "laser" = 0,"energy" = 0, "bomb" = 0, "bio" = 0, "rad" = 0, "fire" = 0, "acid" = 0)
-	flags_inv = HIDEEARS
+	will_hide = HIDEEARS
 
 /obj/item/clothing/head/roguetown/helmet/sallet
 	name = "sallet"
 	icon_state = "sallet"
 	desc = "A steel helmet which protects the ears."
 	smeltresult = /obj/item/ingot/steel
-	body_parts_covered = HEAD|HAIR|EARS
-	flags_inv = HIDEEARS
+	will_cover = HEAD|HAIR|EARS
+	will_hide = HIDEEARS
 
 /obj/item/clothing/head/roguetown/helmet/sallet/visored
 	name = "visored sallet"
 	desc = "A steel helmet which protects the ears, nose, and eyes."
 	icon_state = "sallet_visor"
 	adjustable = CAN_CADJUST
-	flags_inv = HIDEEARS|HIDEFACE
+	will_hide = HIDEEARS|HIDEFACE
 	flags_cover = HEADCOVERSEYES
-	body_parts_covered = HEAD|EARS|HAIR|NOSE|EYES
+	prevent_crits = list(BCLASS_CUT, BCLASS_CHOP, BCLASS_BLUNT, BCLASS_STAB)
+	will_cover = HEAD|EARS|HAIR|NOSE|EYES
 	block2add = FOV_BEHIND
 
 /obj/item/clothing/head/roguetown/helmet/sallet/visored/AdjustClothes(mob/user)
@@ -387,12 +426,14 @@
 			body_parts_covered = HEAD|EARS|HAIR
 			flags_inv = HIDEEARS
 			flags_cover = null
+			prevent_crits -= list(BCLASS_STAB) // Vulnerable to eye stabbing while visor is open
 			if(ishuman(user))
 				var/mob/living/carbon/H = user
 				H.update_inv_head()
 			block2add = null
 		else if(adjustable == CADJUSTED)
 			ResetAdjust(user)
+			prevent_crits += list(BCLASS_STAB)
 			if(user)
 				if(ishuman(user))
 					var/mob/living/carbon/H = user
@@ -408,23 +449,23 @@
 /obj/item/clothing/head/roguetown/helmet/heavy
 	name = "barbute"
 	desc = ""
-	body_parts_covered = FULL_HEAD
+	will_cover = FULL_HEAD
 	icon_state = "barbute"
 	item_state = "barbute"
-	flags_inv = HIDEEARS|HIDEFACE
+	will_hide = HIDEEARS|HIDEFACE
 	flags_cover = HEADCOVERSEYES | HEADCOVERSMOUTH
 	armor = list("melee" = 100, "bullet" = 100, "laser" = 0,"energy" = 0, "bomb" = 0, "bio" = 0, "rad" = 0, "fire" = 0, "acid" = 0)
-	prevent_crits = list(BCLASS_CUT, BCLASS_CHOP, BCLASS_BLUNT)
-	anvilrepair = /datum/skill/craft/armorsmithing
+	prevent_crits = list(BCLASS_CUT, BCLASS_CHOP, BCLASS_BLUNT, BCLASS_TWIST)
 	block2add = FOV_RIGHT|FOV_LEFT
 	smeltresult = /obj/item/ingot/steel
+	max_integrity = 250
 
 /obj/item/clothing/head/roguetown/helmet/heavy/guard
 	name = "savoyard"
 	desc = ""
 	icon_state = "guardhelm"
 	emote_environment = 3
-	flags_inv = HIDEEARS|HIDEFACE|HIDEHAIR
+	will_hide = HIDEEARS|HIDEFACE|HIDEHAIR
 	block2add = FOV_RIGHT|FOV_LEFT
 	smeltresult = /obj/item/ingot/iron
 
@@ -433,7 +474,7 @@
 	desc = ""
 	icon_state = "gatehelm"
 	emote_environment = 3
-	flags_inv = HIDEEARS|HIDEFACE|HIDEHAIR
+	will_hide = HIDEEARS|HIDEFACE|HIDEHAIR
 	block2add = FOV_RIGHT|FOV_LEFT
 	smeltresult = /obj/item/ingot/iron
 
@@ -444,6 +485,9 @@
 	adjustable = CAN_CADJUST
 	emote_environment = 3
 	block2add = FOV_RIGHT|FOV_LEFT
+	will_hide = HIDEEARS|HIDEFACE|HIDEHAIR
+	prevent_crits = list(BCLASS_CUT, BCLASS_CHOP, BCLASS_BLUNT, BCLASS_STAB)
+	will_cover = HEAD|EARS|HAIR|NOSE|EYES
 	smeltresult = /obj/item/ingot/steel
 
 /obj/item/clothing/head/roguetown/helmet/heavy/knight/black
@@ -456,8 +500,9 @@
 			adjustable = CADJUSTED
 			icon_state = "knightum"
 			body_parts_covered = HEAD|HAIR|EARS
-			flags_inv = HIDEEARS
+			flags_inv = HIDEEARS|HIDEHAIR
 			flags_cover = null
+			prevent_crits -= list(BCLASS_STAB) // Vulnerable to eye stabs with the cover up
 			emote_environment = 0
 			if(ishuman(user))
 				var/mob/living/carbon/H = user
@@ -465,6 +510,7 @@
 			block2add = null
 		else if(adjustable == CADJUSTED)
 			ResetAdjust(user)
+			prevent_crits += list(BCLASS_STAB)
 			emote_environment = 3
 			if(user)
 				if(ishuman(user))
@@ -473,9 +519,46 @@
 		user.update_fov_angles()
 
 /obj/item/clothing/head/roguetown/helmet/heavy/bucket
-	name = "bucket helmet"
+	name = "great helmet"
 	icon_state = "topfhelm"
 	item_state = "topfhelm"
+	emote_environment = 3
+	will_hide = HIDEEARS|HIDEFACE|HIDEHAIR
+	prevent_crits = list(BCLASS_CUT, BCLASS_CHOP, BCLASS_BLUNT, BCLASS_STAB)
+	block2add = FOV_RIGHT|FOV_LEFT
+	smeltresult = /obj/item/ingot/steel
+
+/obj/item/clothing/head/roguetown/helmet/heavy/astratahelm
+	name = "astrata helmet"
+	icon_state = "astratahelm"
+	item_state = "astratahelm"
+	emote_environment = 3
+	flags_inv = HIDEEARS|HIDEFACE|HIDEHAIR
+	block2add = FOV_RIGHT|FOV_LEFT
+	smeltresult = /obj/item/ingot/steel
+
+/obj/item/clothing/head/roguetown/helmet/heavy/nochelm
+	name = "noc helmet"
+	icon_state = "nochelm"
+	item_state = "nochelm"
+	emote_environment = 3
+	flags_inv = HIDEEARS|HIDEFACE|HIDEHAIR
+	block2add = FOV_RIGHT|FOV_LEFT
+	smeltresult = /obj/item/ingot/steel
+
+/obj/item/clothing/head/roguetown/helmet/heavy/necrahelm
+	name = "necra helmet"
+	icon_state = "necrahelm"
+	item_state = "necrahelm"
+	emote_environment = 3
+	flags_inv = HIDEEARS|HIDEFACE|HIDEHAIR
+	block2add = FOV_RIGHT|FOV_LEFT
+	smeltresult = /obj/item/ingot/steel
+
+/obj/item/clothing/head/roguetown/helmet/heavy/dendorhelm
+	name = "dendor helmet"
+	icon_state = "dendorhelm"
+	item_state = "dendorhelm"
 	emote_environment = 3
 	flags_inv = HIDEEARS|HIDEFACE|HIDEHAIR
 	block2add = FOV_RIGHT|FOV_LEFT
@@ -485,19 +568,58 @@
 	name = "pigface helmet"
 	icon_state = "hounskull"
 	item_state = "hounskull"
+	adjustable = CAN_CADJUST
 	emote_environment = 3
-	flags_inv = HIDEEARS|HIDEFACE|HIDEHAIR
+	will_hide = HIDEEARS|HIDEFACE|HIDEHAIR
 	block2add = FOV_RIGHT|FOV_LEFT
 	smeltresult = /obj/item/ingot/steel
+
+/obj/item/clothing/head/roguetown/helmet/heavy/pigface/AdjustClothes(mob/user)
+	if(loc == user)
+		playsound(user, "sound/items/visor.ogg", 100, TRUE, -1)
+		if(adjustable == CAN_CADJUST)
+			adjustable = CADJUSTED
+			icon_state = "[initial(icon_state)]_raised"
+			body_parts_covered = HEAD|HAIR|EARS
+			flags_inv = HIDEEARS|HIDEHAIR
+			flags_cover = null
+			prevent_crits -= list(BCLASS_STAB) // Vulnerable to eye stabs with the cover up
+			emote_environment = 0
+			if(ishuman(user))
+				var/mob/living/carbon/H = user
+				H.update_inv_head()
+			block2add = null
+		else if(adjustable == CADJUSTED)
+			ResetAdjust(user)
+			prevent_crits += list(BCLASS_STAB)
+			emote_environment = 3
+			if(user)
+				if(ishuman(user))
+					var/mob/living/carbon/H = user
+					H.update_inv_head()
+		user.update_fov_angles()
 
 /obj/item/clothing/head/roguetown/helmet/leather
 	slot_flags = ITEM_SLOT_HEAD|ITEM_SLOT_HIP
 	name = "leather helmet"
 	desc = ""
-	body_parts_covered = HEAD|HAIR|EARS|NOSE
+	will_cover = HEAD|HAIR|EARS|NOSE
 	icon_state = "leatherhelm"
-	armor = list("melee" = 60, "bullet" = 0, "laser" = 0,"energy" = 0, "bomb" = 0, "bio" = 0, "rad" = 0, "fire" = 0, "acid" = 0)
-	prevent_crits = list(BCLASS_CUT, BCLASS_CHOP, BCLASS_BLUNT)
+	armor = list("melee" = 27, "bullet" = 0, "laser" = 0,"energy" = 0, "bomb" = 0, "bio" = 0, "rad" = 0, "fire" = 0, "acid" = 0)
+	prevent_crits = list(BCLASS_BLUNT, BCLASS_TWIST)
+	anvilrepair = null
+	sewrepair = TRUE
+	blocksound = SOFTHIT
+
+/obj/item/clothing/head/roguetown/helmet/leather/volfhelm
+	slot_flags = ITEM_SLOT_HEAD|ITEM_SLOT_HIP
+	name = "volf helmet"
+	desc = "Bandit initiation rites involve the slaying of a volf."
+	will_cover = HEAD|HAIR|EARS
+	icon_state = "volfhead"
+	item_state = "volfhead"
+	armor = list("melee" = 27, "bullet" = 0, "laser" = 0,"energy" = 0, "bomb" = 0, "bio" = 0, "rad" = 0, "fire" = 0, "acid" = 0)
+	prevent_crits = list(BCLASS_BLUNT, BCLASS_TWIST)
 	anvilrepair = null
 	sewrepair = TRUE
 	blocksound = SOFTHIT
@@ -538,6 +660,7 @@
 /obj/item/clothing/head/roguetown/helmet/leather/minershelm/proc/turn_off(mob/user)
 	set_light(0)
 
+//............... Wizard Hat ........................... (unique effects for court mage)
 /obj/item/clothing/head/roguetown/wizhat
 	name = "wizard hat"
 	desc = "Used to distinguish dangerous wizards from senile old men."
@@ -550,6 +673,21 @@
 
 /obj/item/clothing/head/roguetown/wizhat/gen
 	icon_state = "wizardhatgen"
+
+/obj/item/clothing/head/roguetown/wizhat/equipped(mob/living/user, slot)
+	. = ..()
+	if(user.mind && user.mind.assigned_role == "Court Magician")
+		if(slot == SLOT_HEAD && istype(user))
+			user.apply_status_effect(/datum/status_effect/buff/thinking_cap)
+		else
+			user.remove_status_effect(/datum/status_effect/buff/thinking_cap)
+	else return
+
+/obj/item/clothing/head/roguetown/wizhat/dropped(mob/living/user, slot)
+	. = ..()
+	user.remove_status_effect(/datum/status_effect/buff/thinking_cap)
+
+
 
 /obj/item/clothing/head/roguetown/nyle
 	name = "jewel of nyle"
@@ -596,7 +734,7 @@
 		add_overlay(pic)
 
 /obj/item/clothing/head/roguetown/rare
-	icon = 'icons/roguetown/topadd/takyon/Racial_Armour.dmi'	
+	icon = 'icons/roguetown/topadd/takyon/Racial_Armour.dmi'
 	mob_overlay_icon = 'icons/roguetown/topadd/takyon/onmob_racial.dmi'
 	sleevetype = null
 
@@ -604,7 +742,7 @@
 	icon_state = "elfhead"
 	item_state = "elfhead"
 	slot_flags = ITEM_SLOT_HEAD|ITEM_SLOT_HIP
-	name = "elvish plate helmet"
+	name = "dark elf plate helmet"
 	desc = ""
 	body_parts_covered = HEAD|HAIR|NOSE
 	allowed_race = list("elf", "half-elf", "dark elf")
@@ -612,13 +750,19 @@
 	prevent_crits = list(BCLASS_CUT, BCLASS_CHOP, BCLASS_BLUNT)
 	anvilrepair = /datum/skill/craft/armorsmithing
 
+/obj/item/clothing/head/roguetown/rare/elfplate/welfplate
+	name = "elvish plate helmet"
+	icon_state = "welfhead"
+	item_state = "welfhead"
+	body_parts_covered = HEAD|HAIR|NOSE|EYES
+
 /obj/item/clothing/head/roguetown/rare/dwarfplate
 	icon_state = "dwarfhead"
 	item_state = "dwarfhead"
 	slot_flags = ITEM_SLOT_HEAD|ITEM_SLOT_HIP
 	name = "dwarvish plate helmet"
 	desc = ""
-	allowed_sex = list(MALE)
+	allowed_sex = list(MALE, FEMALE)
 	body_parts_covered = HEAD|EARS|HAIR|NOSE|EYES
 	flags_inv = HIDEEARS
 	allowed_race = list("dwarf")
@@ -661,3 +805,78 @@
 	desc = "Known as devil masks amongst the Northern Kingdoms, these serve part decorative headpiece, part protective helmet."
 	worn_x_dimension = 64
 	worn_y_dimension = 64
+
+/obj/item/clothing/head/roguetown/roguehood/feld
+	name = "feldsher's hood"
+	desc = "My cure is most effective."
+	icon_state = "feldhood"
+	item_state = "feldhood"
+	color = null
+
+/obj/item/clothing/head/roguetown/roguehood/phys
+	name = "physicker's hood"
+	desc = "My cure is mostly effective."
+	icon_state = "surghood"
+	item_state = "surghood"
+	color = null
+
+/obj/item/clothing/head/roguetown/helmet/feld
+	name = "feldsher's cage"
+	mob_overlay_icon = 'icons/roguetown/clothing/onmob/64x64/head.dmi'
+	desc = "To protect me from the maggets and creechers I treat."
+	icon_state = "headcage"
+	icon_state = "headcage"
+	worn_x_dimension = 64
+	worn_y_dimension = 64
+	body_parts_covered = HEAD|EARS|HAIR|NOSE|EYES
+
+/obj/item/clothing/head/roguetown/crown/circlet
+	name = "golden circlet"
+	desc = ""
+	icon_state = "goldcirclet"
+	item_state = "goldcirclet"
+	dynamic_hair_suffix = null
+	resistance_flags = FIRE_PROOF | ACID_PROOF
+	sellprice = 50
+
+/obj/item/clothing/head/roguetown/crown/circlet/vision
+	name = "mystical circlet"
+	desc = "A shining gold circlet, with a mysterious purple insert. You feel like you have a third eye while near it..."
+	icon_state = "visioncirclet"
+	item_state = "visioncirclet"
+	sellprice = 80
+
+/obj/item/clothing/head/roguetown/crown/circlet/vision/equipped(mob/user, slot)
+	. = ..()
+	if (slot == SLOT_HEAD && istype(user))
+		ADD_TRAIT(user, TRAIT_THERMAL_VISION,"thermal_vision")
+	else
+		REMOVE_TRAIT(user, TRAIT_THERMAL_VISION,"thermal_vision")
+
+/obj/item/clothing/head/roguetown/crown/circlet/sleepless
+	name = "clouded circlet"
+	desc = "A shining gold circlet, with a mysterious blue insert. You feel more energetic while near it..."
+	icon_state = "sleepcirclet"
+	item_state = "sleepcirclet"
+	sellprice = 80
+
+/obj/item/clothing/head/roguetown/crown/circlet/sleepless/equipped(mob/user, slot)
+	. = ..()
+	if (slot == SLOT_HEAD && istype(user))
+		ADD_TRAIT(user, TRAIT_NOSLEEP,"Fatal Insomnia")
+	else
+		REMOVE_TRAIT(user, TRAIT_NOSLEEP,"Fatal Insomnia")
+
+/obj/item/clothing/head/roguetown/crown/circlet/stink
+	name = "numbing circlet"
+	desc = "A shining gold circlet, with a mysterious green insert. You feel your sense of smell numb while near it..."
+	icon_state = "stinkcirclet"
+	item_state = "stinkcirclet"
+	sellprice = 80
+
+/obj/item/clothing/head/roguetown/crown/circlet/stink/equipped(mob/user, slot)
+	. = ..()
+	if (slot == SLOT_HEAD && istype(user))
+		ADD_TRAIT(user, TRAIT_NOSTINK,"Dead Nose")
+	else
+		REMOVE_TRAIT(user, TRAIT_NOSTINK,"Dead Nose")

@@ -124,7 +124,7 @@
 /datum/reagent/water
 	name = "Water"
 	description = "An ubiquitous chemical substance that is composed of hydrogen and oxygen."
-	color = "#AAAAAA77" // rgb: 170, 170, 170, 77 (alpha)
+	color = "#6a9295c6"
 	taste_description = "water"
 	var/cooling_temperature = 2
 	glass_icon_state = "glass_clear"
@@ -146,11 +146,13 @@
 		var/mob/living/carbon/human/H = M
 		if(!HAS_TRAIT(H, TRAIT_NOHUNGER))
 			H.adjust_hydration(hydration)
-		M.blood_volume = min(M.blood_volume+10, BLOOD_VOLUME_MAXIMUM)
+		if(M.blood_volume < BLOOD_VOLUME_NORMAL)
+			M.blood_volume = min(M.blood_volume+10, BLOOD_VOLUME_NORMAL)
 	..()
 
 /datum/reagent/water/gross
 	taste_description = "lead"
+	color = "#98934bc6"
 
 /datum/reagent/water/gross/on_mob_life(mob/living/carbon/M)
 	M.adjustToxLoss(1)
@@ -905,13 +907,6 @@
 	description = "Sterilizes wounds in preparation for surgery."
 	color = "#D0EFEE" // space cleaner but lighter
 	taste_description = "bitterness"
-
-/datum/reagent/space_cleaner/sterilizine/reaction_mob(mob/living/carbon/C, method=TOUCH, reac_volume)
-	if(method in list(TOUCH, VAPOR, PATCH))
-		for(var/s in C.surgeries)
-			var/datum/surgery/S = s
-			S.speed_modifier = max(0.2, S.speed_modifier)
-	..()
 
 /datum/reagent/iron
 	name = "Iron"

@@ -104,11 +104,15 @@
 				if(HU.marriedto == src)
 					HU.adjust_triumphs(-1)
 				if(HU != src && !HAS_TRAIT(HU, TRAIT_BLIND))
-					if(!HAS_TRAIT(HU, RTRAIT_VILLAIN))
+					if(!HAS_TRAIT(HU, TRAIT_VILLAIN))
 						if(HU.dna?.species && dna?.species)
 							if(HU.dna.species.id == dna.species.id)
 								var/mob/living/carbon/D = HU
-								D.add_stress(/datum/stressevent/viewdeath)
+								if(D.has_flaw(/datum/charflaw/addiction/maniac))
+									D.add_stress(/datum/stressevent/viewdeathmaniac)
+									D.sate_addiction()
+								else
+									D.add_stress(/datum/stressevent/viewdeath)
 
 	. = ..()
 
@@ -129,17 +133,19 @@
 		INVOKE_ASYNC(is_devil(src), TYPE_PROC_REF(/datum/antagonist/devil, beginResurrectionCheck), src)
 
 /mob/living/carbon/human/proc/zombie_check()
-	if(mind && ckey)
-		if(mind.has_antag_datum(/datum/antagonist/vampirelord))
-			return
-		if(mind.has_antag_datum(/datum/antagonist/werewolf))
-			return
-		if(mind.has_antag_datum(/datum/antagonist/zombie))
-			return
-		if(mind.has_antag_datum(/datum/antagonist/skeleton))
-			return
-		mind.add_antag_datum(/datum/antagonist/zombie)
-		qdel(cleric)
+	if(!mind)
+		return
+	if(mind.has_antag_datum(/datum/antagonist/vampirelord))
+		return
+	if(mind.has_antag_datum(/datum/antagonist/werewolf))
+		return
+	if(mind.has_antag_datum(/datum/antagonist/zombie))
+		return
+	if(mind.has_antag_datum(/datum/antagonist/skeleton))
+		return
+	if(HAS_TRAIT(src, TRAIT_ZOMBIE_IMMUNE))
+		return
+	return mind.add_antag_datum(/datum/antagonist/zombie)
 
 /mob/living/carbon/human/gib(no_brain, no_organs, no_bodyparts, safe_gib = FALSE)
 	for(var/mob/living/carbon/human/CA in viewers(7, src))
@@ -149,6 +155,10 @@
 			if(CA.marriedto == src)
 				CA.adjust_triumphs(-1)
 			var/mob/living/carbon/V = CA
+			if(V.has_flaw(/datum/charflaw/addiction/maniac))
+				V.add_stress(/datum/stressevent/viewgibmaniac)
+				V.sate_addiction()
+				continue
 			V.add_stress(/datum/stressevent/viewgib)
 	. = ..()
 

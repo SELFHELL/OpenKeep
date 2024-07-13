@@ -102,11 +102,11 @@
 
 /obj/item/clothing/shoes/roguetown/boots/armor
 	name = "plated boots"
-	desc = "Armored boots made from iron offering heavy protection against both melee and ranged attacks."
+	desc = "Armored boots made from steel offering heavy protection against both melee and ranged attacks."
 	body_parts_covered = FEET
 	icon_state = "armorboots"
 	item_state = "armorboots"
-	prevent_crits = list(BCLASS_CUT, BCLASS_CHOP, BCLASS_BLUNT)
+	prevent_crits = list(BCLASS_CUT, BCLASS_CHOP, BCLASS_BLUNT, BCLASS_TWIST)
 	color = null
 	blocksound = PLATEHIT
 	armor = list("melee" = 100, "bullet" = 100, "laser" = 0,"energy" = 0, "bomb" = 0, "bio" = 0, "rad" = 0, "fire" = 0, "acid" = 0)
@@ -115,7 +115,10 @@
 
 /obj/item/clothing/shoes/roguetown/boots/armor/light
 	name = "light plate boots"
-	desc = ""
+	icon_state = "vboots"
+	item_state = "vboots"
+	desc = "Lightly armored boots made from iron offering protection against both melee and ranged attacks."
+	armor = list("melee" = 80, "bullet" = 80, "laser" = 0,"energy" = 0, "bomb" = 0, "bio" = 0, "rad" = 0, "fire" = 0, "acid" = 0)
 	max_integrity = 250
 	armor_class = ARMOR_CLASS_MEDIUM
 
@@ -148,7 +151,7 @@
 	sleevetype = null
 
 /obj/item/clothing/shoes/roguetown/boots/rare/elfplate
-	name = "elvish plated boots"
+	name = "dark elf plated boots"
 	desc = ""
 	body_parts_covered = FEET
 	icon_state = "elfshoes"
@@ -159,10 +162,15 @@
 	blocksound = PLATEHIT
 	armor = list("melee" = 100, "bullet" = 100, "laser" = 0,"energy" = 0, "bomb" = 0, "bio" = 0, "rad" = 0, "fire" = 0, "acid" = 0)
 
+/obj/item/clothing/shoes/roguetown/boots/rare/elfplate/welfplate
+	name = "elvish plated boots"
+	icon_state = "welfshoes"
+	item_state = "welfshoes"
+
 /obj/item/clothing/shoes/roguetown/boots/rare/dwarfplate
 	name = "dwarvish plated boots"
 	allowed_race = list("dwarf")
-	allowed_sex = list(MALE)
+	allowed_sex = list(MALE, FEMALE)
 	desc = ""
 	body_parts_covered = FEET|LEGS
 	icon_state = "dwarfshoe"

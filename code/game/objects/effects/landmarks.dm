@@ -87,7 +87,7 @@ INITIALIZE_IMMEDIATE(/obj/effect/landmark)
 /obj/effect/landmark/start/adventurerlate
 	name = "Adventurerlate"
 	icon_state = "arrow"
-	jobspawn_override = list("Adventurer", "Pilgrim", "skeleton")
+	jobspawn_override = list("Skeleton", "Drifter", "Pilgrim", "Adventurer")
 	delete_after_roundstart = FALSE
 
 /obj/effect/landmark/start/vagrantlate
@@ -112,6 +112,12 @@ INITIALIZE_IMMEDIATE(/obj/effect/landmark)
 	name = "Townerlate"
 	icon_state = "arrow"
 	jobspawn_override = list("Towner")
+	delete_after_roundstart = FALSE
+
+/obj/effect/landmark/start/combatlate
+	name = "Combatlate"
+	icon_state = "arrow"
+	jobspawn_override = list("Skeleton", "Drifter", "Pilgrim", "Adventurer", "Mercenary")
 	delete_after_roundstart = FALSE
 
 /obj/effect/landmark/start/lord
@@ -163,7 +169,7 @@ INITIALIZE_IMMEDIATE(/obj/effect/landmark)
 	icon_state = "arrow"
 
 /obj/effect/landmark/start/woodsman
-	name = "Village Elder"
+	name = "Mayor"
 	icon_state = "arrow"
 
 /obj/effect/landmark/start/priest
@@ -187,11 +193,11 @@ INITIALIZE_IMMEDIATE(/obj/effect/landmark)
 	icon_state = "arrow"
 
 /obj/effect/landmark/start/nightman
-	name = "Nightman"
+	name = "Niteman"
 	icon_state = "arrow"
 
 /obj/effect/landmark/start/nightmaiden
-	name = "Nightmaiden"
+	name = "Nitemaiden"
 	icon_state = "arrow"
 
 /obj/effect/landmark/start/merchant
@@ -302,6 +308,10 @@ INITIALIZE_IMMEDIATE(/obj/effect/landmark)
 
 /obj/effect/landmark/start/adventurer
 	name = "Adventurer"
+	icon_state = "arrow"
+
+/obj/effect/landmark/start/feldsher
+	name = "Feldsher"
 	icon_state = "arrow"
 
 //yrf
@@ -722,5 +732,3 @@ INITIALIZE_IMMEDIATE(/obj/effect/landmark/start/new_player)
 /obj/effect/landmark/underworldcoin/Initialize(mapload)
 	GLOB.underworldcoin += loc
 	return
-
-

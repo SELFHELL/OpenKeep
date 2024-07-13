@@ -6,23 +6,28 @@
 	allowed_sexes = list(MALE)
 	allowed_races = list("Humen")
 	outfit = /datum/outfit/job/roguetown/adventurer/barbarian
+	category_tags = list(CTAG_ADVENTURER)
 
+/datum/outfit/job/roguetown/adventurer/barbarian
+	allowed_patrons = list(/datum/patron/divine/ravox, /datum/patron/inhumen/graggar)
 
 /datum/outfit/job/roguetown/adventurer/barbarian/pre_equip(mob/living/carbon/human/H)
 	..()
 	H.mind.adjust_skillrank(/datum/skill/combat/polearms, 2, TRUE)
 	H.mind.adjust_skillrank(/datum/skill/combat/axesmaces, 2, TRUE)
 	H.mind.adjust_skillrank(/datum/skill/combat/wrestling, 3, TRUE)
-	H.mind.adjust_skillrank(/datum/skill/combat/unarmed, 2, TRUE)
+	H.mind.adjust_skillrank(/datum/skill/combat/unarmed, 3, TRUE)
 	H.mind.adjust_skillrank(/datum/skill/combat/swords, 1, TRUE)
 	H.mind.adjust_skillrank(/datum/skill/combat/knives, 1, TRUE)
 	H.mind.adjust_skillrank(/datum/skill/craft/crafting, 1, TRUE)
+	H.mind.adjust_skillrank(/datum/skill/craft/tanning, 1, TRUE)
 	H.mind.adjust_skillrank(/datum/skill/misc/swimming, 3, TRUE)
 	H.mind.adjust_skillrank(/datum/skill/misc/climbing, 3, TRUE)
 	H.mind.adjust_skillrank(/datum/skill/misc/riding, 2, TRUE)
 	H.mind.adjust_skillrank(/datum/skill/misc/medicine, 1, TRUE)
 	H.mind.adjust_skillrank(/datum/skill/misc/sewing, 2, TRUE)
 	H.mind.adjust_skillrank(/datum/skill/craft/cooking, 1, TRUE)
+	H.mind.adjust_skillrank(/datum/skill/misc/athletics, 3, TRUE)
 	belt = /obj/item/storage/belt/rogue/leather
 	shoes = /obj/item/clothing/shoes/roguetown/boots/leather
 	if(prob(13))
@@ -50,10 +55,12 @@
 			beltr = /obj/item/rogueweapon/mace/woodclub
 			H.mind.adjust_skillrank(/datum/skill/combat/axesmaces, 1, TRUE)
 	H.change_stat("strength", 3)
-	H.change_stat("endurance", 3)
-	H.change_stat("constitution", 1)
-	H.change_stat("intelligence", 1)
+	H.change_stat("endurance", 2)
+	H.change_stat("constitution", 2)
+	H.change_stat("intelligence", -1)
 	ADD_TRAIT(H, TRAIT_STEELHEARTED, TRAIT_GENERIC)
-	ADD_TRAIT(H, RTRAIT_MEDIUMARMOR, TRAIT_GENERIC)
 	if(H.dna?.species)
 		H.dna.species.soundpack_m = new /datum/voicepack/male/warrior()
+	if(H.patron != /datum/patron/divine/ravox)
+		H.patron = GLOB.patronlist[/datum/patron/divine/ravox]
+		to_chat(H, "<span class='warning'>My patron had not endorsed my practices in my younger years. I've since grown acustomed to [H.patron].")

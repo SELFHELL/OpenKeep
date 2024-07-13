@@ -44,13 +44,14 @@
 		switch(lootroll)
 			if(1)
 				new /mob/living/carbon/human/species/skeleton/npc(mastert)
+				new /obj/structure/closet/crate/chest/lootbox(mastert)
 			if(2)
 				new /obj/structure/closet/crate/chest/lootbox(mastert)
 	..()
 
 /obj/structure/closet/dirthole/closed/loot/examine(mob/user)
 	. = ..()
-	if(HAS_TRAIT(user, RTRAIT_NOSTINK))
+	if(HAS_TRAIT(user, TRAIT_SOUL_EXAMINE))
 		if(lootroll == 1)
 			. += "<span class='warning'>Better let this one sleep.</span>"
 
@@ -68,8 +69,31 @@
 /obj/structure/closet/dirthole/toggle(mob/living/user)
 	return
 
+/obj/structure/closet/dirthole/proc/attemptwatermake(mob/living/user, var/obj/item/reagent_containers/bucket)
+	testing("attempting to make water proc called")
+	if(user.used_intent.type == /datum/intent/splash)
+		testing("intent check complete")
+		if(bucket.reagents)
+			testing("reagent check complete")
+			var/datum/reagent/master_reagent = bucket.reagents.get_master_reagent()
+			if(do_after(user, 10 SECONDS, target = src))
+				if(bucket.reagents.remove_reagent(master_reagent.type, clamp(master_reagent.volume, 1, 100)))
+					testing("remove reagent proc complete")
+					var/turf/open/water/creatable/W = new(get_turf(src))
+					W.water_reagent = master_reagent.type
+					W.water_volume = clamp(master_reagent.volume, 1, 100)
+					W.update_icon()
+					playsound(W, 'sound/foley/waterenter.ogg', 100, FALSE)
+					qdel(src)
+	testing("proc ended")
+
 /obj/structure/closet/dirthole/attackby(obj/item/attacking_item, mob/user, params)
 	if(!istype(attacking_item, /obj/item/rogueweapon/shovel))
+		if(istype(attacking_item, /obj/item/reagent_containers/glass/bucket/wooden))
+			var/obj/item/reagent_containers/glass/bucket/wooden/bucket = attacking_item
+			testing("attempt water make proc should be called now")
+			attemptwatermake(user, bucket)
+			return
 		return ..()
 	var/obj/item/rogueweapon/shovel/attacking_shovel = attacking_item
 	if(user.used_intent.type != /datum/intent/shovelscoop)
@@ -277,7 +301,7 @@
 						if(prob(5))
 							new /obj/item/natural/worms/grubs(T)
 						else
-							new /obj/item/natural/worms/leeches(T)
+							new /obj/item/natural/worms/leech(T)
 					else
 						new /obj/item/natural/worms(T)
 		else

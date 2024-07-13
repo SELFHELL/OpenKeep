@@ -1,7 +1,7 @@
 
 /obj/item/bomb
 	name = "bottle bomb"
-	desc = ""
+	desc = "Dangerous explosion, in a bottle."
 	icon_state = "bbomb"
 	icon = 'icons/roguetown/items/misc.dmi'
 	w_class = WEIGHT_CLASS_NORMAL
@@ -13,6 +13,12 @@
 	var/lit = FALSE
 	var/prob2fail = 23
 
+/obj/item/bomb/homemade
+	prob2fail = 30
+
+/obj/item/bomb/homemade/Initialize()
+	. = ..()
+	fuze = rand(20, 50)
 
 /obj/item/bomb/spark_act()
 	light()

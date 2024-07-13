@@ -1,13 +1,14 @@
 /datum/advclass/mercenary/underdweller
-	name = "Underdweller"
-	tutorial = "A member of the Underdwellers, you've taken many of the deadliest contracts known to man in the Dwarven Federation. Drow or Dwarf, you've put your differences aside for coin and adventure."
-	allowed_sexes = list(MALE, FEMALE)
-	allowed_races = list(
-		"Dwarf",
-		"Dark Elf"
-	)
-	outfit = /datum/outfit/job/roguetown/mercenary/underdweller
-	ismerc = TRUE
+    name = "Underdweller"
+    tutorial = "A member of the Underdwellers, you've taken many of the deadliest contracts known to man in the Dwarven Federation. Drow or Dwarf, you've put your differences aside for coin and adventure."
+    allowed_sexes = list(MALE, FEMALE)
+    allowed_races = list(
+        "Dwarf",
+        "Dark Elf"
+    )
+    outfit = /datum/outfit/job/roguetown/mercenary/underdweller
+    category_tags = list(CTAG_MERCENARY)
+    maximum_possible_slots = 5
 
 /datum/outfit/job/roguetown/mercenary/underdweller/pre_equip(mob/living/carbon/human/H)
     ..()
@@ -26,9 +27,10 @@
     if(H.mind)
         H.mind.adjust_skillrank(/datum/skill/combat/knives, 2, TRUE)
         H.mind.adjust_skillrank(/datum/skill/combat/axesmaces, 4, TRUE)
-        H.mind.adjust_skillrank(/datum/skill/mining, 3, TRUE)
+        H.mind.adjust_skillrank(/datum/skill/labor/mining, 3, TRUE)
         H.mind.adjust_skillrank(/datum/skill/combat/wrestling, 4, TRUE)
         H.mind.adjust_skillrank(/datum/skill/combat/unarmed, 3, TRUE)
+        H.mind.adjust_skillrank(/datum/skill/misc/athletics, 3, TRUE)
         H.mind.adjust_skillrank(/datum/skill/craft/crafting, 2, TRUE)
         H.mind.adjust_skillrank(/datum/skill/craft/engineering, 1, TRUE)
         H.mind.adjust_skillrank(/datum/skill/misc/reading, 1, TRUE)
@@ -38,4 +40,4 @@
         H.mind.adjust_skillrank(/datum/skill/misc/sewing, 1, TRUE)
         H.change_stat("fortune", 1)
         H.change_stat("strength", 1)
-    ADD_TRAIT(H, RTRAIT_MEDIUMARMOR, TRAIT_GENERIC)
+    ADD_TRAIT(H, TRAIT_MEDIUMARMOR, TRAIT_GENERIC)

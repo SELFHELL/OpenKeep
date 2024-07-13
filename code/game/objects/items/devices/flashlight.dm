@@ -337,7 +337,7 @@
 	slot_flags = ITEM_SLOT_HIP
 	var/datum/looping_sound/torchloop/soundloop
 	var/should_self_destruct = TRUE //added for torch burnout
-	max_integrity = 20
+	max_integrity = 40
 	fuel = 30 MINUTES
 	light_depth = 0
 	light_height = 0
@@ -400,12 +400,14 @@
 		var/mob/M = loc
 		M.update_inv_hands()
 		M.update_inv_belt()
+	damtype = BRUTE
 
 /obj/item/flashlight/flare/torch/fire_act(added, maxstacks)
 	if(fuel)
 		if(!on)
 			playsound(src.loc, 'sound/items/firelight.ogg', 100)
 			on = TRUE
+			damtype = BURN
 			update_brightness()
 			force = on_damage
 			soundloop.start()
@@ -427,12 +429,17 @@
 
         if (should_self_destruct)  // check if self-destruct
             times_used += 1
-            if (times_used >= 6) //amount used before burning out
+            if (times_used >= 8) //amount used before burning out
                 user.visible_message("<span class='warning'>[src] has burnt out and falls apart!</span>")
                 qdel(src)
 
 /obj/item/flashlight/flare/torch/spark_act()
 	fire_act()
+
+/obj/item/flashlight/flare/torch/get_temperature()
+	if(on)
+		return FIRE_MINIMUM_TEMPERATURE_TO_SPREAD
+	return ..()
 
 /obj/item/flashlight/flare/torch/metal
 	name = "torch"

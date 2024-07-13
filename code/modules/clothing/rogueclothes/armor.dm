@@ -32,7 +32,7 @@
 	body_parts_covered = CHEST|GROIN|ARMS|VITALS
 	icon_state = "haubergeon"
 	armor = list("melee" = 100, "bullet" = 0, "laser" = 0,"energy" = 0, "bomb" = 0, "bio" = 0, "rad" = 0, "fire" = 0, "acid" = 0)
-	prevent_crits = list(BCLASS_CUT, BCLASS_CHOP, BCLASS_BLUNT)
+	prevent_crits = list(BCLASS_CUT, BCLASS_CHOP, BCLASS_STAB) // Chainmail is meant to stop cuts, stabs and arrows, not blunt
 	blocksound = CHAINHIT
 	var/do_sound = FALSE
 	drop_sound = 'sound/foley/dropsound/chain_drop.ogg'
@@ -91,7 +91,7 @@
 	icon_state = "halfplate"
 	item_state = "halfplate"
 	armor = list("melee" = 100, "bullet" = 100, "laser" = 0,"energy" = 0, "bomb" = 0, "bio" = 0, "rad" = 0, "fire" = 0, "acid" = 0)
-	prevent_crits = list(BCLASS_CUT, BCLASS_CHOP, BCLASS_BLUNT)
+	prevent_crits = list(BCLASS_CUT, BCLASS_CHOP, BCLASS_BLUNT, BCLASS_TWIST)
 	nodismemsleeves = TRUE
 	max_integrity = 500
 	allowed_sex = list(MALE, FEMALE)
@@ -239,6 +239,18 @@
 	GLOB.lordcolor -= src
 	return ..()
 
+/obj/item/clothing/suit/roguetown/armor/brigandine/coatplates
+	slot_flags = ITEM_SLOT_ARMOR
+	name = "coat of plates"
+	desc = "A leather coat with plates attached to it to increase protection while retaining mobility"
+	icon_state = "coat_of_plates"
+	blocksound = PLATEHIT
+	body_parts_covered = CHEST|GROIN|VITALS|ARMS
+	armor = list("melee" = 100, "bullet" = 100, "laser" = 0,"energy" = 0, "bomb" = 0, "bio" = 0, "rad" = 0, "fire" = 0, "acid" = 0)
+	prevent_crits = list(BCLASS_CUT, BCLASS_CHOP, BCLASS_BLUNT, BCLASS_TWIST)
+	max_integrity = 250
+	armor_class = ARMOR_CLASS_HEAVY
+
 /obj/item/clothing/suit/roguetown/armor/armordress
 	slot_flags = ITEM_SLOT_ARMOR
 	name = "padded dress"
@@ -269,7 +281,7 @@
 	body_parts_covered = CHEST|GROIN|LEGS|ARMS|VITALS
 	armor = list("melee" = 50, "bullet" = 0, "laser" = 0,"energy" = 0, "bomb" = 0, "bio" = 0, "rad" = 0, "fire" = 0, "acid" = 0)
 	prevent_crits = list(BCLASS_CUT,BCLASS_BLUNT)
-	blocksound = SOFTHIT
+	blocksound = SOFTUNDERHIT
 	blade_dulling = DULLING_BASHCHOP
 	break_sound = 'sound/foley/cloth_rip.ogg'
 	drop_sound = 'sound/foley/dropsound/cloth_drop.ogg'
@@ -298,8 +310,8 @@
 	icon_state = "leather"
 //	color = "#514339"
 	body_parts_covered = CHEST|GROIN|VITALS
-	armor = list("melee" = 65, "bullet" = 0, "laser" = 0,"energy" = 0, "bomb" = 0, "bio" = 0, "rad" = 0, "fire" = 0, "acid" = 0)
-	prevent_crits = list(BCLASS_CUT,BCLASS_BLUNT)
+	armor = list("melee" = 25, "bullet" = 0, "laser" = 0,"energy" = 0, "bomb" = 0, "bio" = 0, "rad" = 0, "fire" = 0, "acid" = 0)
+	prevent_crits = list(BCLASS_CUT, BCLASS_BLUNT, BCLASS_TWIST)
 	blocksound = SOFTHIT
 	blade_dulling = DULLING_BASHCHOP
 	break_sound = 'sound/foley/cloth_rip.ogg'
@@ -323,7 +335,7 @@
 	icon_state = "studleather"
 	item_state = "studleather"
 	blocksound = SOFTHIT
-	prevent_crits = list(BCLASS_CUT,BCLASS_BLUNT,BCLASS_CHOP)
+	prevent_crits = list(BCLASS_CUT, BCLASS_BLUNT, BCLASS_CHOP)
 	nodismemsleeves = TRUE
 	body_parts_covered = CHEST|GROIN|VITALS
 	max_integrity = 300
@@ -335,7 +347,6 @@
 	desc = "A leather vest with no sleeves, won't really protect much."
 	icon_state = "vest"
 	item_state = "vest"
-	color = "#514339"
 	armor = list("melee" = 60, "bullet" = 0, "laser" = 0,"energy" = 0, "bomb" = 0, "bio" = 0, "rad" = 0, "fire" = 0, "acid" = 0)
 	prevent_crits = list(BCLASS_CUT)
 	blocksound = SOFTHIT
@@ -348,6 +359,11 @@
 	sleevetype = null
 	sleeved = null
 	armor_class = ARMOR_CLASS_LIGHT
+
+/obj/item/clothing/suit/roguetown/armor/leather/vest/butcher
+	name = "leather vest"
+	icon_state = "leathervest"
+	item_state = "leathervest"
 
 /obj/item/clothing/suit/roguetown/armor/leather/vest/sailor
 	name = "sea jacket"
@@ -374,7 +390,7 @@
 		for(var/obj/item/I in things)
 			STR.remove_from_storage(I, get_turf(src))
 
-/obj/item/clothing/suit/roguetown/armor/leather/vest/sailor/nightman
+/obj/item/clothing/suit/roguetown/armor/leather/vest/sailor/niteman
 	name = "silk jacket"
 	icon_state = "nightman"
 	sleeved = 'icons/roguetown/clothing/onmob/armor.dmi'
@@ -432,7 +448,7 @@
 	sellprice = 50
 	armor_class = ARMOR_CLASS_LIGHT
 	allowed_sex = list(FEMALE)
-	allowed_race = list("humen", "tiefling", "dwarfm","argonian", "elfd", "elfw", "helf", "aasimar")
+	allowed_race = ALL_RACES_LIST
 
 /obj/item/clothing/suit/roguetown/armor/silkcoat/Initialize()
 	color = pick(CLOTHING_PURPLE, null,CLOTHING_GREEN, CLOTHING_RED)
@@ -451,6 +467,22 @@
 	armor_class = ARMOR_CLASS_MEDIUM
 	max_integrity = 120
 	sellprice = 10
+
+obj/item/clothing/suit/roguetown/armor/chainmail/iron/orc
+	name = "Orc Marauder Chain Vest"
+	icon_state = "orc_chainvest"
+	item_state = "orc_chainvest_item"
+	icon = 'icons/roguetown/mob/monster/Orc.dmi'
+	smeltresult = /obj/item/ingot/iron
+	allowed_race = list("orc")
+	armor = list("melee" = 50, "bullet" = 0, "laser" = 0,"energy" = 0, "bomb" = 0, "bio" = 0, "rad" = 0, "fire" = 0, "acid" = 0)
+	body_parts_covered = CHEST|GROIN|ARMS|LEGS|VITALS
+	prevent_crits = list(BCLASS_CUT, BCLASS_CHOP, BCLASS_BLUNT)
+	armor_class = ARMOR_CLASS_MEDIUM
+	blocksound = PLATEHIT
+	max_integrity = 100
+	sellprice = 10
+
 
 /obj/item/clothing/suit/roguetown/armor/plate/half/grenzelhoft
 	slot_flags = ITEM_SLOT_ARMOR
@@ -471,8 +503,8 @@
 
 /obj/item/clothing/suit/roguetown/armor/rare/elfplate
 	slot_flags = ITEM_SLOT_ARMOR
-	name = "elvish plate"
-	desc = "A fine suit of sleek, moulded elvish metal. It's interlocking nature and light weight allow for increased maneuverability."
+	name = "dark elf plate"
+	desc = "A fine suit of sleek, moulded dark elf metal. It's interlocking nature and light weight allow for increased maneuverability."
 	body_parts_covered = CHEST|VITALS
 	icon_state = "elfchest"
 	item_state = "elfchest"
@@ -494,6 +526,12 @@
 													'sound/foley/footsteps/armor/fullplate (2).ogg',\
 													'sound/foley/footsteps/armor/fullplate (3).ogg'), 100)
 
+/obj/item/clothing/suit/roguetown/armor/rare/elfplate/welfplate
+	name = "elvish plate"
+	desc = "A suit of steel interwoven, through honed elven technique, with hardened bark plates."
+	icon_state = "welfchest"
+	item_state = "welfchest"
+
 /obj/item/clothing/suit/roguetown/armor/rare/dwarfplate
 	slot_flags = ITEM_SLOT_ARMOR
 	name = "dwarvish plate"
@@ -506,7 +544,6 @@
 	prevent_crits = list(BCLASS_CUT, BCLASS_CHOP, BCLASS_BLUNT)
 	nodismemsleeves = TRUE
 	max_integrity = 500
-	allowed_sex = list(MALE)
 	var/do_sound = TRUE
 	anvilrepair = /datum/skill/craft/armorsmithing
 	smeltresult = /obj/item/ingot/steel
