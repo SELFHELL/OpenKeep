@@ -9,7 +9,8 @@
 		"Dwarf",
 		"Tiefling",
 		"Dark Elf",
-		"Aasimar"
+		"Aasimar",
+		"Ullathid"
 	)
 	outfit = /datum/outfit/job/roguetown/adventurer/sorceress
 	maximum_possible_slots = 2

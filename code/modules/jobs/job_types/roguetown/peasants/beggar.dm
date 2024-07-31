@@ -14,7 +14,8 @@
 		"Half-Elf",
 		"Tiefling",
 		"Dark Elf",
-		"Aasimar"
+		"Aasimar",
+		"Ullathid"
 	)
 	allowed_ages = list(AGE_ADULT, AGE_MIDDLEAGED, AGE_OLD)
 	outfit = /datum/outfit/job/roguetown/vagrant

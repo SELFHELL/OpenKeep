@@ -9,7 +9,8 @@
 		"Dwarf",
 		"Tiefling",
 		"Dark Elf",
-		"Aasimar"
+		"Aasimar",
+		"Ullathid"
 	)
 	outfit = /datum/outfit/job/roguetown/adventurer/mage
 	category_tags = list(CTAG_ADVENTURER)

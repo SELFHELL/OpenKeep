@@ -89,6 +89,12 @@
 	specuse = list("human", "dwarf")
 	under_layer = TRUE
 
+/datum/sprite_accessory/hair/msquid
+	name = "Tentacles"
+	icon_state = "m_tentacle"
+	gender = MALE
+	specuse = list("ullathid") 
+
 /datum/sprite_accessory/hair/hair_bog
 	name = "Bog"
 	icon_state = "hair_bog"
@@ -352,6 +358,13 @@
 	icon_state = "elfhair_majestic"
 	gender = NEUTER
 	specuse = list("elf")
+
+
+/datum/sprite_accessory/hair/fsquid
+	name = "Tentacles"
+	icon_state = "f_tentacle"
+	gender = FEMALE
+	specuse = list("ullathid")
 
 /datum/sprite_accessory/hair/fmajesty
 	name = "Majestic Human"
@@ -827,7 +840,13 @@
 	color_src = HAIR
 
 /datum/sprite_accessory/snouts
-	icon = 'icons/mob/mutant_bodyparts.dmi'
+	icon = 'icons/roguetown/mob/bodies/attachments.dmi'
+
+/datum/sprite_accessory/snouts/illithid
+	name = "tentacle_mf"
+	icon_state = "tentacle_mf"
+
+//hacky method, I got lazy
 
 /datum/sprite_accessory/snouts/sharp
 	name = "Sharp"
@@ -887,6 +906,14 @@
 	icon_state = "tiebtail"
 	specuse = list("tiefling")
 	gender = NEUTER
+	color_src = SKINCOLOR
+	offsetti = TRUE
+
+/datum/sprite_accessory/horns/tieb
+	icon = 'icons/roguetown/mob/bodies/attachments.dmi'
+	name = "TiebHorns"
+	icon_state = "tiebhorns"
+	specuse = list("tiefling")
 	color_src = SKINCOLOR
 	offsetti = TRUE
 
