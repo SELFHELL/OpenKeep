@@ -17,7 +17,6 @@
 		"Aasimar",
 		"Ullathid"
 	)
-	allowed_ages = list(AGE_ADULT, AGE_MIDDLEAGED, AGE_OLD)
 	outfit = /datum/outfit/job/roguetown/vagrant
 	bypass_lastclass = TRUE
 	bypass_jobban = TRUE
@@ -26,6 +25,8 @@
 	display_order = JDO_VAGRANT
 	show_in_credits = FALSE
 	can_random = FALSE
+
+	cmode_music = 'sound/music/combat_bum.ogg'
 
 /datum/job/roguetown/vagrant/New()
 	. = ..()
