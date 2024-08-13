@@ -89,12 +89,6 @@
 	specuse = list("human", "dwarf", "elf", "aasimar", "tiefling")
 	under_layer = TRUE
 
-/datum/sprite_accessory/hair/msquid
-	name = "Tentacles"
-	icon_state = "m_tentacle"
-	gender = MALE
-	specuse = list("ullathid") 
-
 /datum/sprite_accessory/hair/hair_bog
 	name = "Bog"
 	icon_state = "hair_bog"
@@ -359,13 +353,6 @@
 	icon_state = "elfhair_majestic"
 	gender = NEUTER
 	specuse = list("elf")
-
-
-/datum/sprite_accessory/hair/fsquid
-	name = "Tentacles"
-	icon_state = "f_tentacle"
-	gender = FEMALE
-	specuse = list("ullathid")
 
 /datum/sprite_accessory/hair/fmajesty
 	name = "Majestic Human"
