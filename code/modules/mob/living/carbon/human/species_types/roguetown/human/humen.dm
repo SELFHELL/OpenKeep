@@ -45,6 +45,16 @@
 	specstats_f = list("strength" = 0, "perception" = 0, "intelligence" = 1, "constitution" = 0, "endurance" = 0, "speed" = 1, "fortune" = 0)
 	enflamed_icon = "widefire"
 
+	customizers = list(
+		/datum/customizer/organ/eyes/humanoid,
+		/datum/customizer/bodypart_feature/hair/head/humanoid,
+		/datum/customizer/bodypart_feature/hair/facial/humanoid,
+		/datum/customizer/bodypart_feature/accessory,
+	)
+	body_markings = list(
+		/datum/body_marking/tonage,
+	)
+
 /datum/species/human/northern/check_roundstart_eligible()
 	return TRUE
 
@@ -80,7 +90,7 @@
 	"black - rogue" = "2b201b",
 	"black - midnight" = "1d1b2b",
 
-	"red - berry" = "48322a",
+	"red - berry" = "b23434",
 	"red - wine" = "82534c",
 	"red - sunset" = "82462b",
 	"red - blood" = "822b2b",
