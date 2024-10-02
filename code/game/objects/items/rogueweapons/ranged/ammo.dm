@@ -175,13 +175,64 @@
 	flag = "bullet"
 	speed = 0.4
 
+
+/obj/projectile/bullet/reusable/arrow/copper
+	name = "copper arrow"
+	desc = "A fletched projectile, with simple plumes and copper tip."
+	damage = 25 //The shitty basic arrows, worse then a normal one 
+	ammo_type = /obj/item/ammo_casing/caseless/rogue/arrow/copper
+	range = 30
+	embedchance = 100
+	armor_penetration = 25
+	speed = 0.4
+
+
+/obj/projectile/bullet/reusable/arrow/iron
+	name = "arrow"
+	desc = "A fletched projectile, with simple plumes and iron tip."
+	damage = 30 //Iron is the standard for arrows
+	ammo_type = /obj/item/ammo_casing/caseless/rogue/arrow/iron
+	range = 30
+	embedchance = 100
+	armor_penetration = 30
+	speed = 0.4
+
+/obj/projectile/bullet/reusable/arrow/steel
+	name = "arrow"
+	desc = "A fletched projectile, with simple plumes and steel tip."
+	damage = 35 //Steel is the "Superior"
+	ammo_type = /obj/item/ammo_casing/caseless/rogue/arrow/steel
+	range = 30
+	embedchance = 100
+	armor_penetration = 50
+	speed = 0.4
+
+/obj/projectile/bullet/reusable/arrow/blacksteel
+	name = "blacksteel arrow"
+	desc = "A fletched projectile, with simple plumes and steel tip."
+	damage = 45 //These REALLY shouldnt be accessable by players, much less in large amounts
+	range = 30
+	ammo_type = /obj/item/ammo_casing/caseless/rogue/arrow/blacksteel
+	embedchance = 100
+	armor_penetration = 100
+	speed = 0.4
+
+/obj/projectile/bullet/reusable/arrow/barbed
+	name = "barbed arrow"
+	desc = "A fletched projectile, with simple plumes and a barbed iron tip."
+	damage = 40 //high damage, but walanced by the fact that it has zero AP
+	range = 30
+	armor_penetration = 5
+	embedchance = 100
+	ammo_type = /obj/item/ammo_casing/caseless/rogue/arrow/blacksteel
+	woundclass = BCLASS_CUT
+
 // Weaker version of arrow projectile because handmade and brittle, but still decent to hunt with.
 /obj/projectile/bullet/reusable/arrow/stone
 	damage = 30
 	ammo_type = /obj/item/ammo_casing/caseless/rogue/arrow/stone
 	embedchance = 80
 	armor_penetration = 10
-
 
 /obj/item/ammo_casing/caseless/rogue/arrow/poison
 	name = "poison arrow"
