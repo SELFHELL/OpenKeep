@@ -159,6 +159,44 @@
 	possible_item_intents = list(/datum/intent/dagger/cut, /datum/intent/dagger/thrust)
 	max_integrity = 20
 
+/obj/item/ammo_casing/caseless/rogue/arrow/copper
+	name = "copper arrow"
+	desc = "A fletched projectile, with simple plumes and metal tip."
+	projectile_type = /obj/projectile/bullet/reusable/arrow
+	caliber = "arrow"
+	icon_state = "copperarrow"
+
+/obj/item/ammo_casing/caseless/rogue/arrow/iron
+	name = "iron arrow"
+	desc = "A fletched projectile, with simple plumes and metal tip."
+	projectile_type = /obj/projectile/bullet/reusable/arrow
+	caliber = "arrow"
+	icon_state = "ironarrow"
+
+/obj/item/ammo_casing/caseless/rogue/arrow/steel
+	name = "steel arrow"
+	desc = "A fletched projectile, with simple plumes and metal tip."
+	projectile_type = /obj/projectile/bullet/reusable/arrow
+	caliber = "arrow"
+	icon_state = "steelarrow"
+
+/obj/item/ammo_casing/caseless/rogue/arrow/blacksteel
+	name = "blacksteel arrow"
+	desc = "A fletched projectile, with simple plumes and metal tip."
+	projectile_type = /obj/projectile/bullet/reusable/arrow
+	caliber = "arrow"
+	icon_state = "blacksteelarrow"
+
+/obj/item/ammo_casing/caseless/rogue/arrow/barbed
+	name = "barbed arrow"
+	desc = "A fletched projectile, with simple plumes and metal tip."
+	projectile_type = /obj/projectile/bullet/reusable/arrow
+	caliber = "arrow"
+	icon_state = "barbedarrow"
+
+
+
+
 /obj/projectile/bullet/reusable/arrow
 	name = "arrow"
 	desc = "A fletched projectile, with simple plumes and metal tip."
@@ -176,6 +214,7 @@
 	speed = 0.4
 
 
+
 /obj/projectile/bullet/reusable/arrow/copper
 	name = "copper arrow"
 	desc = "A fletched projectile, with simple plumes and copper tip."
@@ -185,6 +224,7 @@
 	embedchance = 100
 	armor_penetration = 25
 	speed = 0.4
+	accuracy = 50
 
 
 /obj/projectile/bullet/reusable/arrow/iron
@@ -196,6 +236,7 @@
 	embedchance = 100
 	armor_penetration = 30
 	speed = 0.4
+	accuracy = 60
 
 /obj/projectile/bullet/reusable/arrow/steel
 	name = "arrow"
@@ -206,6 +247,7 @@
 	embedchance = 100
 	armor_penetration = 50
 	speed = 0.4
+	accuracy = 65
 
 /obj/projectile/bullet/reusable/arrow/blacksteel
 	name = "blacksteel arrow"
@@ -216,6 +258,7 @@
 	embedchance = 100
 	armor_penetration = 100
 	speed = 0.4
+	accuracy = 70
 
 /obj/projectile/bullet/reusable/arrow/barbed
 	name = "barbed arrow"
@@ -226,6 +269,7 @@
 	embedchance = 100
 	ammo_type = /obj/item/ammo_casing/caseless/rogue/arrow/blacksteel
 	woundclass = BCLASS_CUT
+	accuracy = 65
 
 // Weaker version of arrow projectile because handmade and brittle, but still decent to hunt with.
 /obj/projectile/bullet/reusable/arrow/stone

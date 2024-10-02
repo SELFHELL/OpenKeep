@@ -937,6 +937,14 @@
 	body_parts_covered = CHEST|GROIN
 	slot_flags = ITEM_SLOT_ARMOR|ITEM_SLOT_CLOAK
 
+
+/obj/item/clothing/cloak/cape/inquisitor
+	name = "inquisitorial cloak"
+	desc = "An elegant cape of Valorian design, this cape has been used by member-houses of the Lodge since the Second Founding."
+	icon_state = "inquisitor_cloak"
+	item_state = "inquisitor_cloak"
+	sleeved = 'icons/roguetown/clothing/onmob/cloaks.dmi'
+
 // Dumping old black knight stuff here
 /obj/item/clothing/cloak/cape/blkknight
 	name = "blood cape"
