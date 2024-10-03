@@ -9,6 +9,7 @@ GLOBAL_LIST_INIT(character_flaws, list("Alcoholic"=/datum/charflaw/addiction/alc
 	"Wooden Arm (R)"=/datum/charflaw/limbloss/arm_r,
 	"Wooden Arm (L)"=/datum/charflaw/limbloss/arm_l,
 	"Bad Sight"=/datum/charflaw/badsight,
+	"Mute" =/datum/charflaw/mute,
 	"Paranoid"=/datum/charflaw/paranoid,
 	"Clingy"=/datum/charflaw/clingy,
 	"Isolationist"=/datum/charflaw/isolationist,
@@ -262,7 +263,6 @@ GLOBAL_LIST_INIT(character_flaws, list("Alcoholic"=/datum/charflaw/addiction/alc
 
 /datum/charflaw/mute/on_mob_creation(mob/user)
 	..()
-	
 	ADD_TRAIT(user, TRAIT_MUTE, ROUNDSTART_TRAIT)
 
 /datum/charflaw/hunted
