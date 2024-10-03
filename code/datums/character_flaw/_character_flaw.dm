@@ -256,6 +256,15 @@ GLOBAL_LIST_INIT(character_flaws, list("Alcoholic"=/datum/charflaw/addiction/alc
 	head?.add_wound(/datum/wound/facial/eyes/left/permanent)
 	H.update_fov_angles()
 
+/datum/charflaw/mute
+	name = "Silenced"
+	desc = "I am unable to speak.. "
+
+/datum/charflaw/mute/on_mob_creation(mob/user)
+	..()
+	
+	ADD_TRAIT(user, TRAIT_MUTE, ROUNDSTART_TRAIT)
+
 /datum/charflaw/hunted
 	name = "Hunted"
 	desc = "Something in my past has made me a target. I'm always looking over my shoulder."
