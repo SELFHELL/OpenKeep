@@ -341,7 +341,7 @@
 		for(var/mob/living/carbon/human/I in world) // Find all the living Inquisitors and Adepts and give them a triumph for the confession.
 			if(I.mind && (I.mind.assigned_role == "Inquisitor" || I.mind.assigned_role == "Adept") && !(I.stat == DEAD))
 				if(I.mind.assigned_role == "Inquisitor")
-					I.confession_points += 1 // Increase the Inquisitor's confession count.
+					I.confession_points += 5 // Increase the Inquisitor's confession count.
 				I.visible_message("<span class='warning'>A sense of grim satisfaction fills your heart. One down, a million remain.</span>")
 				I.adjust_triumphs(1)
 
@@ -364,28 +364,44 @@
 
 	// Define the available items, their costs, and max purchases
 	var/list/items = list(
-		"Puffer Pistol" = list(
+		"Puffer Pistol (8)" = list(
 			list(type = /obj/item/gun/ballistic/revolver/grenadelauncher/pistol, count = 1),
 			list(type = /obj/item/storage/belt/rogue/pouch/bullets, count = 1),
 			list(type = /obj/item/reagent_containers/glass/bottle/rogue/aflask, count = 1),
-			cost = 1,
+			cost = 8,
 			max_purchases = 1
 		),
-		"Surgery Bag" = list(
+		"Surgery Bag (3)" = list(
 			list(type = /obj/item/storage/backpack/rogue/satchel/surgbag, count = 1),
-			cost = 1,
+			cost = 3,
 			max_purchases = 1
 		),
-		"Lockpick Ring" = list(
+		"Lockpick Ring (2)" = list(
 			list(type = /obj/item/lockpickring/mundane, count = 1),
-			cost = 1,
+			cost = 2,
 			max_purchases = 5
 		),
-		"Bag of Coins" = list(
+		"Bag of Coins (3)" = list(
 			list(type = /obj/item/storage/belt/rogue/pouch/coins/mid, count = 1),
-			cost = 1,
+			cost = 3,
 			max_purchases = 5
+		),
+		"Valorian Cape (2)" = list(
+			list(type = /obj/item/clothing/cloak/cape/inquisitor, count = 1),
+			cost = 2,
+			max_purchases = 3
+		),
+		"Buckled Hat (2)" = list(
+			list(type = /obj/item/clothing/head/roguetown/helmet/leather/inquisitor, count = 1),
+			cost = 2,
+			max_purchases = 3
+		),
+		"Silvered Psycross (1)" = list(
+			list(type = /obj/item/clothing/neck/roguetown/psycross/silver, count = 1),
+			cost = 1,
+			max_purchases = 3
 		)
+		
 	)
 	testing("Items defined: [items]")
 
