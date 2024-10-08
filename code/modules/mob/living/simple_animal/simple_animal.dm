@@ -172,6 +172,9 @@ GLOBAL_VAR_INIT(farm_animals, FALSE)
 
 	var/remains_type
 
+	var/botched_butcher_results
+	var/perfect_butcher_results
+
 /mob/living/simple_animal/Initialize()
 	. = ..()
 	GLOB.simple_animals[AIStatus] += src
@@ -227,7 +230,7 @@ GLOBAL_VAR_INIT(farm_animals, FALSE)
 
 ///Extra effects to add when the mob is tamed, such as adding a riding component
 /mob/living/simple_animal/proc/tamed(mob/user)
-	emote("smile", forced = TRUE)
+	INVOKE_ASYNC(src, PROC_REF(emote), "lower_head", null, null, null, TRUE)
 	tame = TRUE
 	stop_automated_movement_when_pulled = TRUE
 	if(user)
@@ -437,11 +440,17 @@ GLOBAL_VAR_INIT(farm_animals, FALSE)
 		var/list/butcher = list()
 
 		if(butcher_results)
-			butcher += butcher_results
-			if(user.mind.get_skill_level(/datum/skill/labor/butchering) >= 5)
-				butcher += butcher_results // double the yield of the stuff you get
-		if(guaranteed_butcher_results)
-			butcher += guaranteed_butcher_results
+			if(user.mind.get_skill_level(/datum/skill/labor/butchering) <= 1)
+				if(prob(50))
+					butcher = botched_butcher_results // chance to get shit result
+				else
+					butcher = butcher_results
+			else 
+				if(user.mind.get_skill_level(/datum/skill/labor/butchering) >= 5) // binary, butcher gets this bonus, no one else pretty much. Others just get the speed increase and avoid botches on lvl 1 and above.
+					butcher = perfect_butcher_results
+				else
+					butcher = butcher_results
+
 		var/rotstuff = FALSE
 		var/datum/component/rot/simple/CR = GetComponent(/datum/component/rot/simple)
 		if(CR)
@@ -485,9 +494,9 @@ GLOBAL_VAR_INIT(farm_animals, FALSE)
 /mob/living/simple_animal/Stat()
 	..()
 	return //RTCHANGE
-	if(statpanel("Status"))
+/* 	if(statpanel("Status"))
 		stat(null, "Health: [round((health / maxHealth) * 100)]%")
-		return 1
+		return 1 */
 
 /mob/living/simple_animal/proc/drop_loot()
 	if(loot.len)
@@ -536,7 +545,7 @@ GLOBAL_VAR_INIT(farm_animals, FALSE)
 			return FALSE
 	return TRUE
 
-mob/living/simple_animal/handle_fire()
+/mob/living/simple_animal/handle_fire()
 	. = ..()
 	if(fire_stacks > 0)
 		apply_damage(5, BURN)
@@ -598,8 +607,8 @@ mob/living/simple_animal/handle_fire()
 		if(target)
 			return new childspawn(target)
 //			visible_message("<span class='warning'>[src] finally gives birth.</span>")
-			playsound(src, 'sound/foley/gross.ogg', 100, FALSE)
-			breedchildren--
+//			playsound(src, 'sound/foley/gross.ogg', 100, FALSE)
+//			breedchildren--
 
 /mob/living/simple_animal/canUseTopic(atom/movable/M, be_close=FALSE, no_dexterity=FALSE, no_tk=FALSE)
 	if(incapacitated())
