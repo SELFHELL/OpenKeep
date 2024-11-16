@@ -87,13 +87,30 @@
 
 /datum/crafting_recipe/roguetown/structure/dye_bin
 	name = "dye bin"
-	result = /obj/machinery/gear_painter
-	reqs = list(/obj/item/grown/log/tree/small = 1)
+	result = /obj/machinery/simple_dye_bin
+	reqs = list(/obj/item/grown/log/tree/small = 1,
+	/obj/item/reagent_containers/food/snacks/produce/jacksberry = 1,
+	/obj/item/natural/dirtclod = 1)
 	verbage = "construct"
 	verbage_tp = "carpents"
 	craftsound = 'sound/foley/Building-01.ogg'
 	skillcraft = /datum/skill/craft/carpentry
 	craftdiff = 0
+	subtype_reqs = TRUE // so you can use any subtype of the berries and swampweed
+
+/datum/crafting_recipe/roguetown/structure/dye_bin_luxury
+	name = "luxury dye bin"
+	result = /obj/machinery/dye_bin
+	reqs = list(/obj/item/grown/log/tree/small = 1,
+	/obj/item/reagent_containers/food/snacks/produce/fyritius = 3,
+	/obj/item/reagent_containers/food/snacks/produce/pear = 3,
+	/obj/item/reagent_containers/food/snacks/produce/sunflower = 3,)
+	verbage = "construct"
+	verbage_tp = "carpents"
+	craftsound = 'sound/foley/Building-01.ogg'
+	skillcraft = /datum/skill/craft/carpentry
+	craftdiff = 0
+	subtype_reqs = TRUE // so you can use any subtype of the berries and swampweed
 
 /datum/crafting_recipe/roguetown/structure/chair
 	name = "wooden chair"
@@ -541,3 +558,33 @@
 	verbage_tp = "crafts"
 	craftsound = 'sound/foley/Building-01.ogg'
 	skillcraft = /datum/skill/craft/masonry
+
+// Windows
+
+/datum/crafting_recipe/roguetown/structure/window
+	name = "solid window"
+	result = /obj/structure/roguewindow/solid
+	reqs = list(/obj/item/grown/log/tree/small = 1,
+				/obj/item/natural/glass = 1)
+	craftsound = 'sound/foley/Building-01.ogg'
+	skillcraft = /datum/skill/craft/masonry
+	craftdiff = 0
+
+/datum/crafting_recipe/roguetown/structure/windowopen
+	name = "openable window"
+	result = /obj/structure/roguewindow/openclose
+	reqs = list(/obj/item/grown/log/tree/small = 1,
+				/obj/item/natural/glass = 1,
+				/obj/item/ingot/iron = 1)
+	craftsound = 'sound/foley/Building-01.ogg'
+	skillcraft = /datum/skill/craft/masonry
+	craftdiff = 1
+
+/datum/crafting_recipe/roguetown/structure/windowstained
+	name = "stained glass window (silver)"
+	result = /obj/structure/roguewindow/stained
+	reqs = list(/obj/item/natural/stone = 3,
+				/obj/item/natural/glass = 2,
+				/obj/item/ingot/silver = 1)
+	skillcraft = /datum/skill/craft/masonry
+	craftdiff = 2

@@ -43,7 +43,7 @@
 	backl = /obj/item/storage/backpack/rogue/satchel
 	backpack_contents = list(/obj/item/needle = 1, /obj/item/storage/belt/rogue/pouch/coins/rich = 1 )
 
-	var/obj/item/rogueweapon/woodstaff/aries/P = new()
+	var/obj/item/rogueweapon/polearm/woodstaff/aries/P = new()
 	H.put_in_hands(P, forced = TRUE)
 
 	if((H.dna.species.id == "aasimar" || H.dna.species.id == "dwarf"))
@@ -53,11 +53,15 @@
 		id = /obj/item/clothing/ring/active/nomag
 
 	if(H.mind)
+		if(H.patron != /datum/patron/divine/dendor)					// Astratans rule the church
+			H.patron = GLOB.patronlist[/datum/patron/divine/astrata]
+
 		H.mind.adjust_skillrank(/datum/skill/misc/reading, 5, TRUE)
 		H.mind.adjust_skillrank(/datum/skill/magic/holy, 4, TRUE)
 		H.mind.adjust_skillrank(/datum/skill/combat/unarmed, 3, TRUE)
 		H.mind.adjust_skillrank(/datum/skill/combat/wrestling, 3, TRUE)
 		H.mind.adjust_skillrank(/datum/skill/combat/polearms, 3, TRUE) // Privilege of being the SECOND biggest target in the game, and arguably the worse of the two targets to lose
+		H.mind.adjust_skillrank(/datum/skill/combat/axesmaces, 2, TRUE)
 		H.mind.adjust_skillrank(/datum/skill/misc/athletics, 3, TRUE)
 		H.mind.adjust_skillrank(/datum/skill/misc/sewing, 3, TRUE)
 		H.mind.adjust_skillrank(/datum/skill/misc/medicine, 3, TRUE)
