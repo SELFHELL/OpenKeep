@@ -10,7 +10,8 @@
 		"Dwarf",
 		"Tiefling",
 		"Dark Elf",
-		"Aasimar"
+		"Aasimar",
+		"Ogrun" //Abyssariad: Non-military racial specialization, so they are allowed to work on this role.
 	)
 	outfit = /datum/outfit/job/roguetown/adventurer/miner
 	category_tags = list(CTAG_PILGRIM, CTAG_TOWNER)
@@ -49,6 +50,8 @@
 
 	if(H.dna.species.id == "dwarf")
 		head = /obj/item/clothing/head/roguetown/helmet/leather/minershelm
+		id = /obj/item/clothing/ring/silver/makers_guild
+		beltr = /obj/item/roguekey/blacksmith
 		H.cmode_music = 'sound/music/combat_dwarf.ogg'
 	else
 		beltr = /obj/item/flashlight/flare/torch/lantern

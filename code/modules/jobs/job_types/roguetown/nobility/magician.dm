@@ -23,7 +23,7 @@
 	whitelist_req = FALSE
 	bypass_lastclass = TRUE
 	give_bank_account = 120
-	min_pq = 4
+	min_pq = 0
 	cmode_music = 'sound/music/combat_noble.ogg'
 
 /datum/outfit/job/roguetown/magician/pre_equip(mob/living/carbon/human/H)
@@ -37,7 +37,6 @@
 	beltr = /obj/item/keyring/mage
 	backl = /obj/item/rogueweapon/polearm/woodstaff
 	shoes = /obj/item/clothing/shoes/roguetown/shortboots
-	backpack_contents = list(/obj/item/scrying = 1)
 	if(H.mind)
 		H.mind.adjust_skillrank(/datum/skill/misc/reading, 6, TRUE)
 		H.mind.adjust_skillrank(/datum/skill/magic/arcane, pick(6,5), TRUE)

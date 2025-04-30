@@ -139,11 +139,13 @@
 #define AXE_CUT				/datum/intent/axe/cut
 #define AXE_CHOP			/datum/intent/axe/chop
 
-#define SPEAR_THRUST		/datum/intent/polearm/thrust/spear
 #define POLEARM_BASH			/datum/intent/polearm/bash
+#define POLEARM_SWING			/datum/intent/polearm/bash/swing
 #define SPEAR_CUT			/datum/intent/polearm/cut
 
 #define POLEARM_THRUST		/datum/intent/polearm/thrust
+#define SPEAR_POKE			/datum/intent/polearm/thrust/poke
+#define SPEAR_THRUST		/datum/intent/polearm/thrust/spear
 
 #define MESSER_CHOP			/datum/intent/sword/chop/messer
 
@@ -326,3 +328,7 @@ GLOBAL_LIST_INIT(shove_disarming_types, typecacheof(list(
 #define BULLET_ACT_FORCE_PIERCE		"PIERCE"	//It pierces through the object regardless of the bullet being piercing by default.
 #define BULLET_ACT_TURF				"TURF"		//It hit us but it should hit something on the same turf too. Usually used for turfs.
 #define BULLET_ACT_MISS				"MISS"
+
+//Kaizoku Assets.
+
+#define MANCATCHER				/datum/intent/polearm/thrust/mancatcher

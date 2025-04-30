@@ -411,9 +411,9 @@
 /obj/structure/table/wood{
 	icon_state = "largetable"
 	},
-/obj/item/rogueweapon/sword/long/greatsword/elfgsword,
-/obj/item/rogueweapon/sword/long/greatsword/elfgsword,
-/obj/item/rogueweapon/sword/long/greatsword/elfgsword,
+/obj/item/rogueweapon/sword/long/kriegsmesser,
+/obj/item/rogueweapon/sword/long/kriegsmesser,
+/obj/item/rogueweapon/sword/long/kriegsmesser,
 /turf/open/floor/rogue/cobble,
 /area/rogue)
 "aX" = (
@@ -677,7 +677,7 @@
 /area/rogue/indoors/vampire_manor)
 "bG" = (
 /obj/structure/fluff/wallclock/vampire,
-/obj/machinery/light/rogue/hearth/big_fireplace,
+/obj/machinery/light/rogue/wallfire/big_fireplace,
 /turf/open/floor/rogue/hexstone,
 /area/rogue/indoors/vampire_manor)
 "bH" = (

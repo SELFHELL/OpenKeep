@@ -241,10 +241,15 @@ SUBSYSTEM_DEF(mapping)
 	otherZ += load_map_config("_maps/map_files/dakkatown/otherz/dakkamountain.json")
 	otherZ += load_map_config("_maps/map_files/dakkatown/otherz/dakkaswamp.json")*/
 
-	//For Rogue map
-	otherZ += load_map_config("_maps/map_files/roguetown/otherz/smallforest.json")
-	otherZ += load_map_config("_maps/map_files/roguetown/otherz/smalldecap.json")
-	otherZ += load_map_config("_maps/map_files/roguetown/otherz/smallswamp.json")
+	if(config.map_name == "Vanderlin") // Vanderlin
+		otherZ += load_map_config("_maps/map_files/vanderlin/otherz/vanderlin_forest.json")
+		otherZ += load_map_config("_maps/map_files/vanderlin/otherz/vanderlin_mountain.json")
+		otherZ += load_map_config("_maps/map_files/vanderlin/otherz/vanderlin_bog.json")
+		// Add dungeon map files here later, maybe we can pick from a list of them?
+	else //For Rogue map
+		otherZ += load_map_config("_maps/map_files/roguetown/otherz/smallforest.json")
+		otherZ += load_map_config("_maps/map_files/roguetown/otherz/smalldecap.json")
+		otherZ += load_map_config("_maps/map_files/roguetown/otherz/smallswamp.json")
 
 	//For all maps
 	otherZ += load_map_config("_maps/map_files/roguetown/otherz/underworld.json")
@@ -266,11 +271,14 @@ SUBSYSTEM_DEF(mapping)
 		++space_levels_so_far
 		add_new_zlevel("Empty Area [space_levels_so_far]", ZTRAITS_SPACE)
 
+/*	// Deprecated tg code, we don't have lavaland, thus we don't load it.
 	// load mining
 	if(config.minetype == "lavaland")
 		LoadGroup(FailedZs, "Lavaland", "map_files/Mining", "Lavaland.dmm", default_traits = ZTRAITS_LAVALAND)
 	else if (!isnull(config.minetype))
 		INIT_ANNOUNCE("WARNING: An unknown minetype '[config.minetype]' was set! This is being ignored! Update the maploader code!")
+	*/
+
 	#endif
 
 	if(LAZYLEN(FailedZs))	//but seriously, unless the server's filesystem is messed up this will never happen

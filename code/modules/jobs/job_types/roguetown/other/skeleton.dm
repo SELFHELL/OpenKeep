@@ -14,7 +14,11 @@
 		"Dwarf",
 		"Tiefling",
 		"Dark Elf",
-		"Aasimar"
+		"Aasimar",
+		"Changeling",
+		"Skylancer",
+		"Ogrun",
+		"Undine"
 	)
 	tutorial = ""
 
@@ -118,7 +122,7 @@
 		if (8)
 			head = /obj/item/clothing/head/roguetown/helmet/skullcap
 		if (9)
-			head = /obj/item/clothing/head/roguetown/helmet
+			head = /obj/item/clothing/head/roguetown/helmet/nasal
 
 	if(prob(20))
 		backr = /obj/item/rogueweapon/shield/wood

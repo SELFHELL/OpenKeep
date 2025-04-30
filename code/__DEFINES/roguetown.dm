@@ -1,11 +1,11 @@
 //used in various places
-#define ALL_RACES_LIST			list("human", "dwarf", "elf", "tiefling", "aasimar", "orc", "zizombie")
+#define ALL_RACES_LIST			list("human", "dwarf", "elf", "tiefling", "aasimar", "orc", "zizombie", "abyssariad")
 
-#define ALL_PLAYER_RACES_BY_NAME		list("Humen", "Half-Elf", "Dark Elf", "Elf", "Dwarf","Tiefling", "Aasimar")
+#define ALL_PLAYER_RACES_BY_NAME		list("Humen", "Half-Elf", "Dark Elf", "Elf", "Dwarf","Tiefling", "Aasimar", "Changeling", "Skylancer", "Ogrun", "Undine")
 
-#define ALL_TEMPLE_PATRONS 		list(/datum/patron/divine/astrata, /datum/patron/divine/noc, /datum/patron/divine/eora, /datum/patron/divine/necra, /datum/patron/divine/pestra)
-#define ALL_CLERIC_PATRONS 		list(/datum/patron/divine/astrata, /datum/patron/divine/noc, /datum/patron/divine/eora, /datum/patron/divine/necra, /datum/patron/divine/pestra, /datum/patron/divine/dendor)
-#define ALL_TEMPLAR_PATRONS 	list(/datum/patron/divine/astrata, /datum/patron/divine/noc, /datum/patron/divine/eora, /datum/patron/divine/necra, /datum/patron/divine/pestra)
+#define ALL_TEMPLE_PATRONS 		list(/datum/patron/divine/astrata, /datum/patron/divine/noc, /datum/patron/divine/eora, /datum/patron/divine/pestra, /datum/patron/divine/malum, /datum/patron/divine/abyssor)
+#define ALL_CLERIC_PATRONS 		list(/datum/patron/divine/astrata, /datum/patron/divine/noc, /datum/patron/divine/eora, /datum/patron/divine/necra, /datum/patron/divine/pestra, /datum/patron/divine/dendor, /datum/patron/divine/malum, /datum/patron/divine/abyssor)
+#define ALL_TEMPLAR_PATRONS 	list(/datum/patron/divine/astrata, /datum/patron/divine/noc, /datum/patron/divine/eora, /datum/patron/divine/necra, /datum/patron/divine/pestra, /datum/patron/divine/malum)
 
 #define PLATEHIT "plate"
 #define CHAINHIT "chain"
@@ -111,7 +111,9 @@ GLOBAL_LIST_EMPTY(job_respawn_delays)
 #define CTAG_CHALLENGE 		"CAT_CHALLENGE"  	// Challenge class - Meant to be free for everyone
 #define CTAG_MERCENARY		"CAT_MERCENARY"
 #define CTAG_GARRISON		"CAT_GARRISON"
-#define CTAG_ADEPT			"CAT_ADEPT" // Used for Adept class selection
+#define CTAG_ADEPT			"CAT_ADEPT" 		// Used for Adept class selection
+#define CTAG_CONSORT		"CAT_CONSORT"		// Consort classes
+#define CTAG_HAND			"CAT_HAND"			// Hand classes
 
 /*
 	String category tags
@@ -245,7 +247,7 @@ GLOBAL_LIST_EMPTY(job_respawn_delays)
 | ARMOR BASIC CONCEPT |
 \--------------------*/
 /*
-Valid until the day someoen adds blunt/stab/cut damage defines from Blackstone
+Valid until the day someone adds blunt/stab/cut damage defines from Blackstone.
 
 Five general types of armor with some general outlines.
 *With current system armor less than 25 vs arrows is pretty much zero.
@@ -266,8 +268,9 @@ Thing can move up or down an armor class by significant changes to coverage & cr
 | ARMOR INTEGRITY DEFINES |	- So armor makes sense
 \------------------------*/
 
-#define INTEGRITY_STRONGEST		500		// STEEL
-#define INTEGRITY_STRONG		300		// IRON
+#define INTEGRITY_STRONGEST		400		// STEEL CHESTPIECES
+#define INTEGRITY_STRONGER		300		// STEEL
+#define INTEGRITY_STRONG		250		// IRON/PERIPHERAL
 #define INTEGRITY_STANDARD		200		// LEATHER
 #define INTEGRITY_POOR			150		// GAMBESON, COPPER
 #define INTEGRITY_WORST			100
@@ -298,8 +301,8 @@ Thing can move up or down an armor class by significant changes to coverage & cr
 #define ARMOR_SCALE			list("melee" = 65, "bullet" = 65, "laser" = 0, "energy" = 0, "bomb" = 0, "bio" = 0, "rad" = 0, "fire" = 0, "acid" = 0)
 
 // Heavy AC
-#define ARMOR_PLATE_BAD		list("melee" = 70, "bullet" = 50, "laser" = 0, "energy" = 0, "bomb" = 0, "bio" = 0, "rad" = 0, "fire" = 0, "acid" = 0)
-#define ARMOR_PLATE			list("melee" = 85, "bullet" = 70, "laser" = 0, "energy" = 0, "bomb" = 0, "bio" = 0, "rad" = 0, "fire" = 0, "acid" = 0)
+#define ARMOR_PLATE_BAD		list("melee" = 65, "bullet" = 50, "laser" = 0, "energy" = 0, "bomb" = 0, "bio" = 0, "rad" = 0, "fire" = 0, "acid" = 0)
+#define ARMOR_PLATE			list("melee" = 80, "bullet" = 70, "laser" = 0, "energy" = 0, "bomb" = 0, "bio" = 0, "rad" = 0, "fire" = 0, "acid" = 0)
 #define ARMOR_PLATE_GOOD	list("melee" = 90, "bullet" = 85, "laser" = 0, "energy" = 0, "bomb" = 0, "bio" = 0, "rad" = 0, "fire" = 0, "acid" = 0)
 
 

@@ -7,7 +7,7 @@
 	force_wielded = DAMAGE_SWORD_WIELD
 	throwforce = 10
 	slot_flags = ITEM_SLOT_HIP
-	possible_item_intents = list(/datum/intent/sword/cut, /datum/intent/sword/thrust)
+	possible_item_intents = list(/datum/intent/sword/cut, /datum/intent/sword/thrust, /datum/intent/sword/strike) //No reason why an arming sword can't pommel strike.
 	gripped_intents = list(/datum/intent/sword/cut, /datum/intent/sword/thrust)
 	name = "sword"
 	desc = "A trustworthy blade design, the first dedicated tool of war since before the age of history."
@@ -44,13 +44,17 @@
 | Cut intent |
 \-----------*/
 /datum/intent/sword/cut
-	name = "strike"
+	name = "cut"
 	icon_state = "incut"
 	attack_verb = list("cuts", "slashes")
 	animname = "cut"
 	blade_class = BCLASS_CUT
 	hitsound = list('sound/combat/hits/bladed/genslash (1).ogg', 'sound/combat/hits/bladed/genslash (2).ogg', 'sound/combat/hits/bladed/genslash (3).ogg')
 	misscost = 4
+
+/datum/intent/sword/cut/sabre //Don't give this to anything with longsword damage or it'll start cutting through iron chainmail. Save that for the katanas /s
+	penfactor = AP_SABRE_CUT //23 combined AP, enough that it actually slices through gambesons and leather with little to medium impediment. Not a multiple of 5, heresy, I know.
+
 
 /datum/intent/sword/cut/zwei
 	name = "cut"
@@ -59,12 +63,12 @@
 	swingdelay = 1
 
 /datum/intent/sword/cut/rapier
-	chargetime = 0
 	damfactor = 0.8
+	clickcd = 10 //Some saving grace, still don't know why you'd choose this.
 
 /datum/intent/sword/cut/short
 	clickcd = 10
-	damfactor = 0.85
+	damfactor = 1
 
 /*------------\
 | Chop intent |
@@ -78,13 +82,25 @@
 	hitsound = list('sound/combat/hits/bladed/genchop (1).ogg', 'sound/combat/hits/bladed/genchop (2).ogg', 'sound/combat/hits/bladed/genchop (3).ogg')
 	penfactor = AP_SWORD_CHOP
 	damfactor = 1.1
-	swingdelay = 1
+	swingdelay = 0 //swingdelay 1 was too punishing here for very little benefit. Already balanced out by inferior crits, higher miss cost and opportunity cost compared to other intents.
 	misscost = 8
 
+/datum/intent/sword/chop/sabre
+	penfactor = AP_SABRE_CHOP //18 AP. Slightly better if penetrating the armor is not an option, since it has slightly more damage.
+
 /datum/intent/sword/chop/long
-	damfactor = 1.1
+	damfactor = 1.2 //Charged attack, gives it some reasoning to use over the otherwise vastly superior thrust.
 	chargetime = 1.2
-	swingdelay = 1.5
+	misscost = 10
+	warnie = "mobwarning"
+
+/datum/intent/sword/chop/great
+	name = "cleave"
+	attack_verb = list("cleaves", "splits")
+	damfactor = 1.4 //At 13 strenght, on a greatsword (35 damage), this will deal 63 damage. Yes. Still worse against armor, on average, than a halberd's stab or a greataxe's chop.
+	chargetime = 1.5 //Same as halberd chop.
+	swingdelay = 1
+	penfactor = AP_SWORD_CHOP+10 //20 combined AP.
 	misscost = 12
 	warnie = "mobwarning"
 
@@ -105,11 +121,12 @@
 	penfactor = AP_SWORD_THRUST-2
 
 /datum/intent/sword/thrust/short
+	damfactor = 1.25
 	clickcd = 10
 	penfactor = AP_SWORD_THRUST+2
 
 /datum/intent/sword/thrust/rapier
-	penfactor = AP_SWORD_THRUST+5
+	penfactor = AP_RAPIER_THRUST //30 AP, dagger tier, down from its past throne at 40 AP.
 
 /datum/intent/sword/thrust/zwei
 	name = "thrust"
@@ -133,7 +150,7 @@
 	blade_class = BCLASS_BLUNT
 	hitsound = list('sound/combat/hits/blunt/metalblunt (1).ogg', 'sound/combat/hits/blunt/metalblunt (2).ogg', 'sound/combat/hits/blunt/metalblunt (3).ogg')
 	chargetime = 0
-	penfactor = AP_CLUB_SMASH
+	penfactor = AP_CLUB_STRIKE
 	swingdelay = 1
 	damfactor = 0.8
 
@@ -177,7 +194,8 @@
 	smeltresult = /obj/item/ingot/silver
 	max_integrity = INTEGRITY_STRONG
 	sellprice = 45
-	var/last_used = 0
+	last_used = 0
+	is_silver = TRUE
 
 /obj/item/rogueweapon/sword/silver/pickup(mob/user)
 	. = ..()
@@ -213,73 +231,38 @@
 				H.Knockdown(10)
 				H.Paralyze(1)
 
-/obj/item/rogueweapon/sword/silver/funny_attack_effects(mob/living/target, mob/living/user = usr, nodmg)
-	if(world.time < src.last_used + 100)
-		to_chat(user, "<span class='notice'>The silver effect is on cooldown.</span>")
-		return
-
-	. = ..()
-	if(ishuman(target))
-		var/mob/living/carbon/human/s_user = user
-		var/mob/living/carbon/human/H = target
-		var/datum/antagonist/vampirelord/lesser/V = FALSE
-		if(H.mind?.has_antag_datum(/datum/antagonist/vampirelord/lesser))
-			V =  H.mind.has_antag_datum(/datum/antagonist/vampirelord/lesser)
-		var/datum/antagonist/vampirelord/V_lord = FALSE
-		if(H.mind.has_antag_datum(/datum/antagonist/vampirelord/))
-			V_lord = H.mind.has_antag_datum(/datum/antagonist/vampirelord/)
-		if(V)
-			if(V.disguised)
-				H.visible_message("<font color='white'>The silver weapon manifests the [H] curse!</font>")
-				to_chat(H, "<span class='userdanger'>I'm hit by my BANE!</span>")
-				H.adjustFireLoss(30)
-				H.Knockdown(20)
-				H.fire_act(1,4)
-				H.apply_status_effect(/datum/status_effect/debuff/silver_curse)
-				src.last_used = world.time
-			else
-				to_chat(H, "<span class='userdanger'>I'm hit by my BANE!</span>")
-				H.adjustFireLoss(30)
-				H.Knockdown(20)
-				H.fire_act(1,4)
-				H.apply_status_effect(/datum/status_effect/debuff/silver_curse)
-				src.last_used = world.time
-		if(V_lord)
-			if(V_lord.vamplevel < 4 && !V)
-				to_chat(H, "<span class='userdanger'>I'm hit by my BANE!</span>")
-				H.adjustFireLoss(25)
-				H.Knockdown(10)
-				H.fire_act(1,4)
-				src.last_used = world.time
-			if(V_lord.vamplevel == 4 && !V)
-				s_user.Knockdown(10)
-				to_chat(s_user, "<font color='red'> The silver weapon fails!</font>")
-				H.visible_message(H, "<span class='userdanger'>This feeble metal can't hurt me, I HAVE TRANSCENDED!</span>")
-
 /obj/item/rogueweapon/sword/iron
 	force = DAMAGE_SWORD-1
 	force_wielded = DAMAGE_SWORD_WIELD-1
 	desc = "A simple iron sword with a tested edge, sharp and true."
 	icon_state = "isword"
+	smeltresult = /obj/item/ingot/iron
 	max_blade_int = 200
 	max_integrity = INTEGRITY_STRONG
 	wdefense = GOOD_PARRY
 
+//................ Short Swords ............... //
+
 /obj/item/rogueweapon/sword/short
 	force = DAMAGE_SHORTSWORD
 	name = "short sword"
-	desc = "An iron sword of shortened design, a reduced grip for primarily single hand use."
-	icon_state = "iswordshort"
-	possible_item_intents = list(/datum/intent/sword/cut/short, /datum/intent/sword/thrust/short)
+	desc = "A steel sword of shortened design, a reduced grip for primarily single hand use."
+	icon_state = "swordshort"
+	possible_item_intents = list(/datum/intent/sword/thrust/short, /datum/intent/sword/cut/short, /datum/intent/sword/strike)
 	gripped_intents = null
-	smeltresult = /obj/item/ingot/iron
-	max_integrity = INTEGRITY_STANDARD
 	minstr = 4
 	wdefense = GOOD_PARRY
 	wbalance = HARD_TO_DODGE
+	sellprice = 30
+
+/obj/item/rogueweapon/sword/short/iron
+	force = DAMAGE_SHORTSWORD-1
+	desc = "A crude iron sword of shortened design, a reduced grip for primarily single hand use."
+	icon_state = "iswordshort"
+	max_integrity = INTEGRITY_STRONG
+	smeltresult = /obj/item/ingot/iron
+	max_blade_int = 200
 	sellprice = 15
-
-
 
 /*-------\
 | Sabres |	Onehanded, slightly weaker thrust, better for parries. Think rapier but cutting focus.
@@ -288,12 +271,13 @@
 	name = "sabre"
 	desc = "A swift sabre, favored by duelists and cut-throats alike."
 	icon_state = "saber"
-	possible_item_intents = list(/datum/intent/sword/cut, /datum/intent/sword/thrust/curved)
+	possible_item_intents = list(/datum/intent/sword/cut/sabre, /datum/intent/sword/thrust/curved, /datum/intent/sword/chop/sabre)
 	gripped_intents = null
 	parrysound = list('sound/combat/parry/bladed/bladedthin (1).ogg', 'sound/combat/parry/bladed/bladedthin (2).ogg', 'sound/combat/parry/bladed/bladedthin (3).ogg')
 	swingsound = BLADEWOOSH_SMALL
 	minstr = 5
 	wdefense = ULTMATE_PARRY
+	wbalance = HARD_TO_DODGE
 
 /obj/item/rogueweapon/sword/sabre/dec
 	name = "decorated sabre"
@@ -302,7 +286,7 @@
 	sellprice = 140
 
 /obj/item/rogueweapon/sword/sabre/stalker
-	possible_item_intents = list(/datum/intent/sword/cut, /datum/intent/sword/thrust/short)
+	possible_item_intents = list(/datum/intent/sword/cut/sabre, /datum/intent/sword/thrust/short) //This thing is *insanely* strong by current standards due to inheriting the 1.25 damage fast thrust from the shortsword. Just saying.
 	name = "stalker sabre"
 	desc = "A once elegant blade of mythril, diminishing under the suns gaze"
 	icon_state = "spidersaber"
@@ -311,15 +295,16 @@
 /obj/item/rogueweapon/sword/sabre/cutlass
 	name = "cutlass"
 	desc = "Both tool and weapon of war, favored by Abyssor cultists and sailors for seafaring battle."
+	possible_item_intents = list(/datum/intent/sword/cut/sabre, /datum/intent/sword/thrust/curved, /datum/intent/sword/chop/sabre, /datum/intent/sword/strike) //Unique weapon, added versatility.
 	icon_state = "cutlass"
 	minstr = 6
-	wbalance = HARD_TO_DODGE
 
 //................ Kings Sword ............... //
 /obj/item/rogueweapon/sword/sabre/lord
 	force = DAMAGE_SWORD_WIELD
 	name = "Kings Sword"
 	desc = "Passed down through the ages, a weapon that once carved a kingdom out now relegated to a decorative piece."
+	possible_item_intents = list(/datum/intent/sword/cut/sabre, /datum/intent/sword/thrust/curved, /datum/intent/sword/chop/sabre, /datum/intent/sword/strike) //Unique weapon, added versatility.
 	icon_state = "lordrap"
 	sellprice = 200
 	max_blade_int = 400
@@ -327,7 +312,7 @@
 //................ Shalal Sabre ............... //
 /obj/item/rogueweapon/sword/sabre/shalal
 	possible_item_intents = list(/datum/intent/sword/cut, /datum/intent/sword/strike)
-	gripped_intents = list(/datum/intent/sword/cut, /datum/intent/sword/strike, /datum/intent/sword/chop/long, /datum/intent/sword/thrust/long)
+	gripped_intents = list(/datum/intent/sword/cut/sabre, /datum/intent/sword/strike, /datum/intent/sword/chop/sabre) //This thing is a sabre that can be wielded for +5 damage.
 	icon_state = "marlin"
 	name = "shalal sabre"
 	desc = "A fine weapon of Zybantu origin in the style of the Shalal tribesfolk, renowned for their defiance against magic and mastery of mounted swordsmanship."
@@ -371,8 +356,8 @@
 | Scimitars |	Normal swords with a strong cutting emphasis.
 \----------*/
 /obj/item/rogueweapon/sword/scimitar
-	possible_item_intents = list(/datum/intent/sword/cut, /datum/intent/sword/chop)
-	gripped_intents = list(/datum/intent/sword/cut, /datum/intent/sword/chop)
+	possible_item_intents = list(/datum/intent/sword/cut/sabre, /datum/intent/sword/chop/sabre)
+	gripped_intents = list(/datum/intent/sword/cut/sabre, /datum/intent/sword/chop/sabre) //Curved blade, cuts better.
 	name = "scimitar"
 	desc = "A Zybantu design for swords, these curved blades are a common sight in the lands of the Ziggurat."
 	icon_state = "scimitar"
@@ -380,13 +365,14 @@
 	wdefense = AVERAGE_PARRY
 
 /obj/item/rogueweapon/sword/scimitar/falchion
-	possible_item_intents = list(/datum/intent/sword/cut, /datum/intent/axe/chop)
-	gripped_intents = list(/datum/intent/sword/cut, /datum/intent/axe/chop)
+	possible_item_intents = list(/datum/intent/sword/cut/sabre, /datum/intent/sword/chop/sabre)
+	gripped_intents = list(/datum/intent/sword/cut/sabre, /datum/intent/sword/chop/sabre)
 	name = "falchion"
 	desc = "Broad blade, excellent steel, a design inspired by Malum the dwarves claim."
 	icon_state = "falchion_old"
 	swingsound = BLADEWOOSH_HUGE
 	wbalance = EASY_TO_DODGE
+	wdefense = GREAT_PARRY //Some reason to use it over the scimitar, now that both have proper cutting edges.
 	sellprice = 100
 
 /obj/item/rogueweapon/sword/scimitar/messer
@@ -395,6 +381,7 @@
 	icon_state = "imesser"
 	possible_item_intents = list(/datum/intent/sword/cut, /datum/intent/axe/chop)
 	gripped_intents = list(/datum/intent/sword/cut, /datum/intent/axe/chop, /datum/intent/sword/thrust)
+	smeltresult = /obj/item/ingot/iron
 	wbalance = EASY_TO_DODGE
 	sellprice = 20
 
@@ -415,9 +402,9 @@
 	minstr = 6
 	wbalance = VERY_HARD_TO_DODGE
 
-/obj/item/rogueweapon/sword/rapier/ironestoc
-	name = "estoc"
-	desc = "A precise iron estoc, favored by the skilled duelists of Valoria."
+/obj/item/rogueweapon/sword/rapier/iron
+	name = "florete"
+	desc = "A precise iron florete, favored by the skilled duelists of Valoria."
 	icon_state = "estoc"
 	smeltresult = /obj/item/ingot/iron
 	wbalance = HARD_TO_DODGE
@@ -436,7 +423,8 @@
 	max_blade_int = 240 // .8 of base steel
 	max_integrity = 400 // .8 of base steel
 	sellprice = 45
-	var/last_used = 0
+	last_used = 0
+	is_silver = TRUE
 
 /obj/item/rogueweapon/sword/rapier/silver/pickup(mob/user)
 	. = ..()
@@ -472,55 +460,12 @@
 				H.Knockdown(10)
 				H.Paralyze(1)
 
-/obj/item/rogueweapon/sword/rapier/silver/funny_attack_effects(mob/living/target, mob/living/user = usr, nodmg)
-	if(world.time < src.last_used + 100)
-		to_chat(user, "<span class='notice'>The silver effect is on cooldown.</span>")
-		return
-
-	. = ..()
-	if(ishuman(target))
-		var/mob/living/carbon/human/s_user = user
-		var/mob/living/carbon/human/H = target
-		var/datum/antagonist/vampirelord/lesser/V = FALSE
-		if(H.mind?.has_antag_datum(/datum/antagonist/vampirelord/lesser))
-			V =  H.mind.has_antag_datum(/datum/antagonist/vampirelord/lesser)
-		var/datum/antagonist/vampirelord/V_lord = FALSE
-		if(H.mind.has_antag_datum(/datum/antagonist/vampirelord/))
-			V_lord = H.mind.has_antag_datum(/datum/antagonist/vampirelord/)
-		if(V)
-			if(V.disguised)
-				H.visible_message("<font color='white'>The silver weapon manifests the [H] curse!</font>")
-				to_chat(H, "<span class='userdanger'>I'm hit by my BANE!</span>")
-				H.adjustFireLoss(30)
-				H.Knockdown(20)
-				H.fire_act(1,4)
-				H.apply_status_effect(/datum/status_effect/debuff/silver_curse)
-				src.last_used = world.time
-			else
-				to_chat(H, "<span class='userdanger'>I'm hit by my BANE!</span>")
-				H.adjustFireLoss(30)
-				H.Knockdown(20)
-				H.fire_act(1,4)
-				H.apply_status_effect(/datum/status_effect/debuff/silver_curse)
-				src.last_used = world.time
-		if(V_lord)
-			if(V_lord.vamplevel < 4 && !V)
-				to_chat(H, "<span class='userdanger'>I'm hit by my BANE!</span>")
-				H.adjustFireLoss(25)
-				H.Knockdown(10)
-				H.fire_act(1,4)
-				src.last_used = world.time
-			if(V_lord.vamplevel == 4 && !V)
-				s_user.Knockdown(10)
-				to_chat(s_user, "<font color='red'> The silver weapon fails!</font>")
-				H.visible_message(H, "<span class='userdanger'>This feeble metal can't hurt me, I HAVE TRANSCENDED!</span>")
-
 // Hoplite Kophesh
 /obj/item/rogueweapon/sword/khopesh
 	name = "ancient khopesh"
 	desc = "A bronze weapon of war from the era of Apotheosis. This blade is older than a few elven generations, but has been very well-maintained and still keeps a good edge."
 	force = 22 // Unique weapon from rare job, slightly more force than most one-handers
-	possible_item_intents = list(/datum/intent/sword/cut, /datum/intent/sword/chop, /datum/intent/sword/strike)
+	possible_item_intents = list(/datum/intent/sword/cut/sabre, /datum/intent/sword/chop/sabre, /datum/intent/sword/strike)
 	gripped_intents = null
 	icon = 'icons/roguetown/weapons/64.dmi'
 	icon_state = "khopesh"
@@ -550,7 +495,7 @@
 /obj/item/rogueweapon/sword/long
 	force_wielded = DAMAGE_LONGSWORD_WIELD
 	possible_item_intents = list(/datum/intent/sword/cut, /datum/intent/sword/thrust, /datum/intent/sword/strike)
-	gripped_intents = list(/datum/intent/sword/cut, /datum/intent/sword/thrust, /datum/intent/sword/strike, /datum/intent/sword/chop)
+	gripped_intents = list(/datum/intent/sword/cut, /datum/intent/sword/thrust/long, /datum/intent/sword/strike, /datum/intent/sword/chop/long)
 	icon_state = "longsword"
 	icon = 'icons/roguetown/weapons/64.dmi'
 	lefthand_file = 'icons/mob/inhands/weapons/roguebig_lefthand.dmi'
@@ -560,6 +505,7 @@
 	swingsound = BLADEWOOSH_LARGE
 	parrysound = "largeblade"
 	pickup_sound = "brandish_blade"
+	minstr = 9
 	bigboy = TRUE
 	wlength = WLENGTH_LONG
 	gripsprite = TRUE
@@ -586,28 +532,27 @@
 //................ Heirloom Sword ............... //
 /obj/item/rogueweapon/sword/long/heirloom
 	force = DAMAGE_SWORD-2
-	force_wielded = DAMAGE_SWORD_WIELD-2
+	force_wielded = DAMAGE_SWORD_WIELD
 	icon_state = "heirloom"
 	name = "old sword"
 	desc = "An old steel sword with a heraldic green leather grip, mouldered by years of neglect."
 	max_blade_int = 180 // Neglected, unused
-	max_integrity = INTEGRITY_STRONG
+	max_integrity = INTEGRITY_STRONG-50
 	static_price = TRUE
 	sellprice = 45 // Old and chipped
 
 
 // Repurposing this unused sword for the Paladin job as a heavy counter against vampires.
 /obj/item/rogueweapon/sword/long/judgement// this sprite is a one handed sword, not a longsword.
-	force = 15
-	force_wielded = 30
-	possible_item_intents = list(/datum/intent/sword/cut, /datum/intent/sword/thrust, /datum/intent/sword/strike)
-	gripped_intents = list(/datum/intent/sword/cut, /datum/intent/sword/thrust/long, /datum/intent/sword/strike, /datum/intent/sword/chop/long)
+	force = DAMAGE_SWORD
+	force_wielded = DAMAGE_LONGSWORD_WIELD+2
 	icon_state = "judgement"
 	name = "judgement"
 	desc = "A sword with a silvered grip, a jeweled hilt and a honed blade; a design fit for nobility."
 	sellprice = 363
 	static_price = TRUE
-	var/last_used = 0
+	last_used = 0
+	is_silver = TRUE
 
 /obj/item/rogueweapon/sword/long/judgement/getonmobprop(tag)
 	. = ..()
@@ -635,76 +580,9 @@
 				H.Knockdown(10)
 				H.Paralyze(1)
 
-/obj/item/rogueweapon/sword/long/judgement/mob_can_equip(mob/living/M, mob/living/equipper, slot, disable_warning = FALSE, bypass_equip_delay_self = FALSE)
-	. = ..()
-	if(ishuman(M))
-		var/datum/antagonist/vampirelord/V_lord = FALSE
-		var/mob/living/carbon/human/H = M
-		if(H.mind?.has_antag_datum(/datum/antagonist/vampirelord))
-			V_lord = H.mind.has_antag_datum(/datum/antagonist/vampirelord/)
-		if(H.mind?.has_antag_datum(/datum/antagonist/vampirelord/lesser))
-			to_chat(H, "<span class='userdanger'>I cannot equip this, it is made of my BANE!</span>")
-			H.Knockdown(20)
-			H.adjustFireLoss(60)
-			H.Paralyze(1)
-			H.fire_act(1,5)
-		if(V_lord)
-			if(V_lord.vamplevel < 4 && !H.mind.has_antag_datum(/datum/antagonist/vampirelord/lesser))
-				to_chat(H, "<span class='userdanger'>I cannot equip this, it is made of my BANE!</span>")
-				H.Knockdown(10)
-				H.Paralyze(1)
-			else
-				if(prob(25))
-					H.fire_act(1,3)
-
-/obj/item/rogueweapon/sword/long/judgement/funny_attack_effects(mob/living/target, mob/living/user = usr, nodmg)
-	if(world.time < src.last_used + 120)
-		to_chat(user, "<span class='notice'>The silver effect is on cooldown.</span>")
-		return
-
-	. = ..()
-	if(ishuman(target))
-		var/mob/living/carbon/human/s_user = user
-		var/mob/living/carbon/human/H = target
-		var/datum/antagonist/vampirelord/lesser/V = FALSE
-		if(H.mind?.has_antag_datum(/datum/antagonist/vampirelord/lesser))
-			V = H.mind.has_antag_datum(/datum/antagonist/vampirelord/lesser)
-		var/datum/antagonist/vampirelord/V_lord = FALSE
-		if(H.mind.has_antag_datum(/datum/antagonist/vampirelord/))
-			V_lord = H.mind.has_antag_datum(/datum/antagonist/vampirelord/)
-		if(V)
-			if(V.disguised)
-				H.visible_message("<font color='white'>The silver weapon undoes [H]'s wicked disguise!</font>")
-				to_chat(H, "<span class='userdanger'>I'm hit by my BANE!</span>")
-				H.adjustFireLoss(60)
-				H.Knockdown(30)
-				H.fire_act(1,5)
-				H.apply_status_effect(/datum/status_effect/debuff/silver_curse)
-				src.last_used = world.time
-			else
-				to_chat(H, "<span class='userdanger'>I'm hit by my BANE!</span>")
-				H.adjustFireLoss(60)
-				H.Knockdown(30)
-				H.fire_act(1,5)
-				H.apply_status_effect(/datum/status_effect/debuff/silver_curse)
-				src.last_used = world.time
-		if(V_lord)
-			if(V_lord.vamplevel < 4 && !V)
-				to_chat(H, "<span class='userdanger'>I'm hit by my BANE!</span>")
-				H.adjustFireLoss(30)
-				H.Knockdown(20)
-				H.fire_act(1,4)
-				H.apply_status_effect(/datum/status_effect/debuff/silver_curse)
-				src.last_used = world.time
-			if(V_lord.vamplevel == 4 && !V)
-				if(prob(25))
-					H.fire_act(1,3)
-				to_chat(s_user, "<font color='red'> The silver weapon barely works against such an abomination!</font>")
-				H.visible_message(H, "<span class='userdanger'>This feeble metal can't stop me, I HAVE TRANSCENDED!</span>")
-
 /obj/item/rogueweapon/sword/long/vlord // this sprite is a one handed sword, not a longsword.
-	force = 18
-	force_wielded = 30
+	force = DAMAGE_SWORD
+	force_wielded = DAMAGE_LONGSWORD_WIELD+2
 	icon_state = "vlord"
 	name = "Jaded Fang"
 	desc = "An ancestral long blade with an ominous glow, serrated with barbs along it's edges. Stained with a strange green tint."
@@ -723,10 +601,11 @@
 				return list("shrink" = 0.3,"sx" = -2,"sy" = -5,"nx" = 4,"ny" = -5,"wx" = 0,"wy" = -5,"ex" = 2,"ey" = -5,"nturn" = 0,"sturn" = 0,"wturn" = 0,"eturn" = 0,"nflip" = 0,"sflip" = 0,"wflip" = 0,"eflip" = 0,"northabove" = 0,"southabove" = 1,"eastabove" = 1,"westabove" = 0)
 
 /obj/item/rogueweapon/sword/long/rider
-	possible_item_intents = list(/datum/intent/sword/cut, /datum/intent/sword/strike)
-	gripped_intents = list(/datum/intent/sword/cut, /datum/intent/sword/strike, /datum/intent/sword/chop/long)
+	possible_item_intents = list(/datum/intent/sword/cut/sabre, /datum/intent/sword/strike)
+	gripped_intents = list(/datum/intent/sword/cut/sabre, /datum/intent/sword/strike, /datum/intent/sword/chop/long)
 	icon_state = "tabi"
 	name = "kilij scimitar"
+	force = DAMAGE_SWORD-2
 	desc = "A curved blade of Zybantu origin meaning 'curved one'. The standard sword that saw the conquest of the Zybantine continent and peoples."
 	sellprice = 80
 
@@ -743,8 +622,8 @@
 
 
 /obj/item/rogueweapon/sword/long/forgotten
-	force = 16 // Damage is .9 of a steel sword
-	force_wielded = 25
+	force = DAMAGE_SWORD-2
+	force_wielded = DAMAGE_LONGSWORD_WIELD-2
 	possible_item_intents = list(/datum/intent/sword/cut, /datum/intent/sword/thrust, /datum/intent/sword/strike)
 	gripped_intents = list(/datum/intent/sword/cut, /datum/intent/sword/thrust/long, /datum/intent/sword/strike, /datum/intent/sword/chop/long)
 	icon_state = "forgotten"
@@ -756,7 +635,8 @@
 	wbalance = -1
 	wdefense = 4
 	sellprice = 90
-	var/last_used = 0
+	last_used = 0
+	is_silver = TRUE
 
 /obj/item/rogueweapon/sword/long/forgotten/pickup(mob/user)
 	. = ..()
@@ -792,60 +672,19 @@
 				H.Knockdown(10)
 				H.Paralyze(1)
 
-/obj/item/rogueweapon/sword/long/forgotten/funny_attack_effects(mob/living/target, mob/living/user = usr, nodmg)
-	if(world.time < src.last_used + 100)
-		to_chat(user, "<span class='notice'>The silver effect is on cooldown.</span>")
-		return
-
-	. = ..()
-	if(ishuman(target))
-		var/mob/living/carbon/human/s_user = user
-		var/mob/living/carbon/human/H = target
-		var/datum/antagonist/vampirelord/lesser/V = FALSE
-		if(H.mind?.has_antag_datum(/datum/antagonist/vampirelord/lesser))
-			V =  H.mind.has_antag_datum(/datum/antagonist/vampirelord/lesser)
-		var/datum/antagonist/vampirelord/V_lord = FALSE
-		if(H.mind.has_antag_datum(/datum/antagonist/vampirelord/))
-			V_lord = H.mind.has_antag_datum(/datum/antagonist/vampirelord/)
-		if(V)
-			if(V.disguised)
-				H.visible_message("<font color='white'>The silver weapon manifests the [H] curse!</font>")
-				to_chat(H, "<span class='userdanger'>I'm hit by my BANE!</span>")
-				H.adjustFireLoss(30)
-				H.Knockdown(20)
-				H.fire_act(1,4)
-				H.apply_status_effect(/datum/status_effect/debuff/silver_curse)
-				src.last_used = world.time
-			else
-				to_chat(H, "<span class='userdanger'>I'm hit by my BANE!</span>")
-				H.adjustFireLoss(30)
-				H.Knockdown(20)
-				H.fire_act(1,4)
-				H.apply_status_effect(/datum/status_effect/debuff/silver_curse)
-				src.last_used = world.time
-		if(V_lord)
-			if(V_lord.vamplevel < 4 && !V)
-				to_chat(H, "<span class='userdanger'>I'm hit by my BANE!</span>")
-				H.adjustFireLoss(25)
-				H.Knockdown(10)
-				H.fire_act(1,4)
-				src.last_used = world.time
-			if(V_lord.vamplevel == 4 && !V)
-				s_user.Knockdown(10)
-				to_chat(s_user, "<font color='red'> The silver weapon fails!</font>")
-				H.visible_message(H, "<span class='userdanger'>This feeble metal can't hurt me, I HAVE TRANSCENDED!</span>")
-
 //................ Greatsword ............... //
 /obj/item/rogueweapon/sword/long/greatsword
+	force = DAMAGE_SWORD_WIELD //If someone can one-hand this, props to them.
 	force_wielded = DAMAGE_GREATSWORD_WIELD
-	possible_item_intents = list(/datum/intent/sword/cut, /datum/intent/sword/strike)
+	possible_item_intents = list(/datum/intent/sword/chop, /datum/intent/sword/strike)
+	gripped_intents = list(/datum/intent/sword/chop, /datum/intent/sword/chop/great, /datum/intent/sword/strike) //You get chop, bigger chop, and half-swording.
 	name = "greatsword"
-	desc = "An oversized hunk of metal designed for putting fear into men and killing beasts."
+	desc = "An oversized hunk of steel designed for putting fear into the hearts of men and felling beasts." //MY BROTHER, COME JOIN ME.
 	icon_state = "gsw"
 	swingsound = BLADEWOOSH_HUGE
 	wlength = WLENGTH_GREAT
 	slot_flags = ITEM_SLOT_BACK
-	minstr = 11
+	minstr = 12 // To be able to wield this weapon you must be able to PICK IT UP WITHOUT IT FALLING OFF YOUR HANDS. Realistically no class/race combo has over 13 STR when maxrolling.
 	wbalance = EASY_TO_DODGE
 	sellprice = 90
 
@@ -865,12 +704,13 @@
 	name = "flamberge"
 	desc = "Commonly known as a flame-bladed sword, this weapon has an undulating blade. It's wave-like form distributes force better, and is less likely to break on impact."
 	icon_state = "flamberge"
-	wbalance = DODGE_CHANCE_NORMAL
+	wbalance = DODGE_CHANCE_NORMAL //Leaving this here, but it stops it from benefitting from having higher strenght when parried.
 	sellprice = 120
 
 /obj/item/rogueweapon/sword/long/greatsword/zwei
 	possible_item_intents = list(/datum/intent/sword/cut/zwei, /datum/intent/sword/thrust/zwei, /datum/intent/sword/strike)
-	gripped_intents = list(/datum/intent/sword/cut, /datum/intent/sword/thrust/long, /datum/intent/sword/strike, /datum/intent/sword/chop/long)
+	gripped_intents = list(/datum/intent/sword/cut, /datum/intent/sword/thrust/long, /datum/intent/sword/strike, /datum/intent/sword/chop/great) //I don't know why this doesn't already use zweihander specific intents so I'm leaving it here. Also it can thrust which a normal greatsword cannot.
+	force = DAMAGE_SWORD
 	force_wielded = DAMAGE_LONGSWORD_WIELD
 	name = "zweihander"
 	desc = "Sometimes known as a doppelhander or beidhander, this weapon's size is so impressive that it's handling properties are more akin to that of a polearm than a sword."
@@ -878,6 +718,7 @@
 	smeltresult = /obj/item/ingot/iron
 	max_blade_int = 150 // Iron tier
 	max_integrity = 300
+	minstr = 11
 	sellprice = 60
 
 /obj/item/rogueweapon/sword/long/greatsword/zwei/getonmobprop(tag)
@@ -892,15 +733,15 @@
 				return list("shrink" = 0.6,"sx" = -1,"sy" = 3,"nx" = -1,"ny" = 2,"wx" = 3,"wy" = 4,"ex" = -1,"ey" = 5,"nturn" = 0,"sturn" = 0,"wturn" = 70,"eturn" = 20,"nflip" = 1,"sflip" = 1,"wflip" = 1,"eflip" = 1,"northabove" = 1,"southabove" = 0,"eastabove" = 0,"westabove" = 0)
 
 //................ Kriegsmesser ............... //
-/obj/item/rogueweapon/sword/long/greatsword/elfgsword
+/obj/item/rogueweapon/sword/long/kriegsmesser
 	name = "elven kriegsmesser"
-	desc = "A huge, curved elven blade. It's metal is of a high quality, yet still light, crafted by the greatest elven bladesmiths."
+	desc = "A long, curved elven blade. It's metal is of a high quality, yet still light, crafted by the greatest elven bladesmiths."
 	icon_state = "kriegsmesser"
 	wdefense = ULTMATE_PARRY
 	minstr = 10
 	sellprice = 120
 
-/obj/item/rogueweapon/sword/long/greatsword/elfgsword/getonmobprop(tag)
+/obj/item/rogueweapon/sword/long/kriegsmesser/getonmobprop(tag)
 	. = ..()
 	if(tag)
 		switch(tag)
@@ -915,7 +756,7 @@
 //................ Executioners Sword ............... //
 /obj/item/rogueweapon/sword/long/exe
 	possible_item_intents = list(/datum/intent/sword/strike)
-	gripped_intents = list(/datum/intent/sword/chop)
+	gripped_intents = list(/datum/intent/sword/chop) //This is using the quicker, normal sword chop, but I'll pretend it's a feature.
 	icon_state = "exe"
 	name = "executioner's sword"
 	desc = "An ancient blade of ginormous stature, with a round ended tip. The pride and joy of Roguetown's greatest pastime, executions."
@@ -1017,3 +858,212 @@
 	sellprice = 25//lets make the two bars worth it
 
 
+///////////////////////////////////////////////////////////////////
+// Part of Kaizoku project that is still yet to be finished.     //
+// The Demo usage is meant for Stonekeep and Warmongers.		 //
+// If the usage for other sources is desired, before it finishes,//
+// ask monochrome9090 for permission. Respect the artists's will.//
+// If you want this quality content, COMMISSION me instead. 	 //
+// For this project, requirements are low, and mostly lore-based.//
+// I just do not desire for the Abyssariads to be butchered.	 //
+///////////////////////////////////////////////////////////////////
+
+/obj/item/rogueweapon/sword/uchigatana
+	name = "uchigatana"
+	desc = "Shorter and simpler than the Tachi, the Uchigatana is the primary sidearm for the Abyssariad and Heartfelt footsoldiers. As a Zatana, the curved blade favor powerfull chopping strikes - but lacks a protective crossguard and the curve makes it less efficient in thrusting."
+	icon = 'icons/roguetown/kaizoku/weapons/64.dmi'
+	icon_state = "uchigatana"
+	pixel_y = -16
+	pixel_x = -16
+	inhand_x_dimension = 64
+	inhand_y_dimension = 64
+	bigboy = TRUE
+	smeltresult = /obj/item/ingot/steel
+
+/obj/item/rogueweapon/sword/uchigatana/fire //Experimental weapon. Not to be found ingame.
+	name = "fire uchigatana"
+	desc = "Shorter and simpler than the Tachi, the Uchigatana is the primary sidearm for the Abyssariad and Heartfelt footsoldiers. Unlike other uchigatanas, this sword in specifically seems curiously improved with 'frigus' runes."
+
+/obj/item/rogueweapon/sword/uchigatana/fire/attack(mob/M, mob/living/carbon/human/user)
+	if(ismob(M))
+		fire_effect(M, user)
+		..()
+
+/obj/item/rogueweapon/sword/uchigatana/fire/proc/fire_effect(mob/living/L, mob/user)
+	L.adjust_fire_stacks(1)
+	L.IgniteMob()
+	addtimer(CALLBACK(L, TYPE_PROC_REF(/mob/living, ExtinguishMob)), 5 SECONDS)
+	if(user)
+		L.lastattacker = user.real_name
+		L.lastattackerckey = user.ckey
+		L.visible_message("<span class='danger'>[user] has ignited [L] with [src]!</span>", \
+								"<span class='danger'>[user] has ignited you with [src]!</span>")
+	playsound(loc, 'sound/blank.ogg', 50, TRUE, -1)
+	return
+
+/obj/item/rogueweapon/sword/long/tachi //this sword is all fucked. Oh God. Help me.
+	name = "tachi"
+	desc = "A long, curved Zatana of Abyssariad make, introduced when Wokou raiders returned to the Fog Isles with captured horses and began developing their own cavalry tactics."
+	icon = 'icons/roguetown/kaizoku/weapons/64.dmi'
+	icon_state = "tachi"
+	item_state = "tachi"
+	pixel_y = -16
+	pixel_x = -18
+
+/obj/item/rogueweapon/sword/long/tachi/dustcurse/dropped()
+	. = ..()
+	name = "Dustcurse tachi"
+	minstr = 0 //asset solely to be used by NPCs. This will not be found on the hands of players.
+	to_chat(src, "<span class='warning'>A haunting wind scatters [usr] into dust, sweeping it back to the ocean!</span>")
+	if(QDELETED(src))
+		return
+	qdel(src)
+
+/obj/item/rogueweapon/sword/long/greatsword/odachi
+	name = "odachi"
+	desc = "Greatsword traditionally wielded in open battlefields just as it is a ceremonial blade. Though impractical for duels, it breaks spearlines and shields on a whim, requiring momentum with each slash."
+	icon_state = "odachi"
+	icon = 'icons/roguetown/kaizoku/weapons/64.dmi'
+	parrysound = "bladedlarge"
+
+/obj/item/rogueweapon/sword/iron/jian
+	name = "iron jian"
+	icon_state = "jian1"
+	icon = 'icons/roguetown/kaizoku/weapons/32.dmi'
+
+/obj/item/rogueweapon/sword/iron/jian/Initialize()
+	. = ..()
+	var/design = rand(1, 6) //This system will be standardized to other weapons.
+	switch(design)
+		if(1)
+			name = "monk jian"
+			desc = "A simple, double-edged iron sword. With a short guard and slim grip, it is easier to use in martial arts that requires constant flick of the wrist."
+		if(2)
+			name = "frontierman jian"
+			desc = "A simple, double-edged iron sword. With a thicker pommel and stretched guard, it becomes more proper as sideweapons during sieges for overhead attacks."
+		if(3)
+			name = "guardsman jian"
+			desc = "A simple, double-edged iron sword of abyssariad with parrying hooks at cost of slashing effectiveness."
+		if(4)
+			name = "foreigner jian"
+			desc = "A simple, double-edged iron sword of abyssariad design with heartfelt influence, taking smithing standards from Zweihanders."
+		if(5)
+			name = "heartfelt jian"
+			desc = "A simple, double-edged iron sword of abyssariad design with heartfelt influence. Keeping a rather imperial style of guard."
+		if(6)
+			name = "duelist jian"
+			desc = "A simple, double-edged iron sword of abyssariad design with hand protection that resembles one side of the firelance apparatus. Usually used for training."
+	icon_state = "jian[design]"
+
+/obj/item/rogueweapon/sword/scimitar/messer/dao
+	name = "iron dao"
+	desc = "A single edged iron saber of Abyssariad making for horseback use. Suitable for chopping."
+	icon_state = "dao"
+	icon = 'icons/roguetown/kaizoku/weapons/32.dmi'
+
+/obj/item/rogueweapon/sword/scimitar/falchion/yuntoudao //this sprite disappeared by reasons unknown
+	name = "Yuntoudao"
+	desc = "A expensive Abyssariad saber with wide middle and tapered ends in a 'willow-leaf' shape, it concentrates the force of a strike in an axe-like blow, while retaining the swiftness of a saber."
+	icon_state = "yuntoudao"
+	icon = 'icons/roguetown/kaizoku/weapons/32.dmi'
+
+/obj/item/rogueweapon/sword/short/jian
+	name = "short steel jian"
+	desc = "A simple, shortened version of the double-edged Jian made of steel. This is usually given to Abyssariad citizens as a right for self-defense by the emperor's will."
+	icon = 'icons/roguetown/kaizoku/weapons/32.dmi'
+	icon_state = "shortjian1"
+
+/obj/item/rogueweapon/sword/short/jian/Initialize()
+	. = ..()
+	var/design = rand(1, 3) //This system will be standardized to other weapons.
+	switch(design)
+		if(1)
+			name = "conscript short jian"
+			desc = "A simple, shortened version of the double-edged Jian in steel. This is usually given to Abyssariad citizens as a right for self-defense by the emperor's will."
+		if(2)
+			name = "frontierman short jian"
+			desc = "A simple, shortened version of the double-edged Jian in steel. With a thicker pommel and stretched guard, it becomes more proper as side weapons during sieges for overhead attacks."
+		if(3)
+			name = "duelist short jian"
+			desc = "A simple, shortened version of the double-edged with hand protection that resembles one side of the fire lance apparatus. Usually used for training."
+	icon_state = "shortjian[design]"
+
+/obj/item/rogueweapon/sword/short/wakizashi
+	name = "wakizashi"
+	icon_state = "wakizashi1"
+	icon = 'icons/roguetown/kaizoku/weapons/32.dmi'
+	possible_item_intents = list(/datum/intent/sword/cut/sorii, /datum/intent/sword/thrust/sorii)
+
+/obj/item/rogueweapon/sword/short/wakizashi/Initialize()
+	. = ..()
+	var/design = rand(1, 3) //This system will be standardized to other weapons.
+	switch(design)
+		if(1)
+			name = "wakizashi zatana"
+			desc = "A shorter zatana design with circular handguard and heartfelt-influenced pommel. The curveness of the blade makes it better at cutting than thrusting."
+		if(2)
+			name = "traditional wakizashi"
+			desc = "The traditional wakizashi used by abyssariads for centuries, with a lack of a pommel and a broader handguard for hand protection. The sorii of the blade improves the cutting power."
+		if(3)
+			name = "shirasaya wakizashi"
+			desc = "The cheaper adaptation of the Wakizashi with an complete lack of handguard and no tsuka ito protecting the hand."
+	icon_state = "wakizashi[design]"
+
+/datum/intent/sword/cut/sorii //It is the reverse of the Shortsword.
+	clickcd = 10
+	penfactor = 30
+
+/datum/intent/sword/thrust/sorii
+	clickcd = 10
+	damfactor = 0.85
+
+/obj/item/rogueweapon/sword/sabre/piandao
+	name = "piandao"
+	desc = "An curved abyssariad sword with a broad, single-edged blade that ends in a heavier curve for powerful and fast sweeping strikes."
+	icon_state = "piandao"
+	icon = 'icons/roguetown/kaizoku/weapons/32.dmi'
+
+/obj/item/rogueweapon/sword/sabre/piandao/dec
+	name = "decorated piandao"
+	desc = "The Abyssariad saber with the hilt covered in gold and letters reflecting the user's family lineage."
+	icon_state = "piandaodec"
+	max_integrity = 550
+	sellprice = 140
+
+/obj/item/rogueweapon/sword/dragonslayer //It's a sword, yes. It will be used as a sword? My dudes we moving that one like warhammers at this point. So it's blunt at this point.
+	name = "eclipse sword"
+	desc = "Dragonslayers uses swords too big to be called a sword. Massive, thick, heavy and far too rough. Indeed, it is a heap of raw iron made to penetrate dragon skin."
+	gripped_intents = list(/datum/intent/dragonslayer/smash, /datum/intent/polearm/chop) //This is practically a mace... that can chop off heads since it's sharp.
+	icon_state = "eclipse_sword"
+	resistance_flags = FIRE_PROOF
+	smeltresult = /obj/item/ingot/steel
+	max_integrity = 500
+	force = 5 //You won't get ANYTHING by using in one hand. Trust me. EVEN IF YOU COULD.
+	force_wielded = 40 // I thought Gundam would nerf it. He buffed it instead. What a World!
+	slowdown = 1
+	wbalance = -1
+	sellprice = 300
+	w_class = WEIGHT_CLASS_HUGE
+	wbalance = -1 //haha... yeah.
+	wdefense = 3
+	minstr = 13
+	associated_skill = /datum/skill/combat/axesmaces //if you tell me that fighting with this sword is LIKE a sword, I will kill you (ingame)-Mono
+	icon = 'icons/roguetown/kaizoku/weapons/64.dmi'
+	slot_flags = ITEM_SLOT_BACK
+	parrysound = "largeblade"
+	pickup_sound = "brandish_blade"
+	bigboy = TRUE
+
+/datum/intent/dragonslayer/smash
+	name = "smash"
+	icon_state = "insmash"
+	attack_verb = list("clangs")
+	animname = "smash"
+	blade_class = BCLASS_CHOP
+	hitsound = list('sound/combat/hits/bladed/dragonslayer.ogg', 'sound/combat/hits/bladed/dragonslayer2.ogg')
+	penfactor = 30
+	damfactor = 1.2
+	chargetime = 5
+	swingdelay = 5
+	misscost = 35
+	warnie = "mobwarning"

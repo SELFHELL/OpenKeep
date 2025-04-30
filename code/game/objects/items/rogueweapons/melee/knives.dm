@@ -20,7 +20,7 @@
 	pickup_sound = 'sound/foley/equip/swordsmall2.ogg'
 	equip_sound = 'sound/foley/dropsound/holster_sword.ogg'
 	drop_sound = 'sound/foley/dropsound/blade_drop.ogg'
-	wdefense = MEDIOCHRE_PARRY
+	wdefense = MEDIOCRE_PARRY
 	wbalance = HARD_TO_DODGE
 	smeltresult = /obj/item/ingot/steel
 	sharpness = IS_SHARP
@@ -101,7 +101,7 @@
 
 //................ Hunting Knife ............... //
 /obj/item/rogueweapon/knife/hunting
-	force = DAMAGE_DAGGER
+	force = DAMAGE_KNIFE+1
 	throwforce = DAMAGE_KNIFE
 	possible_item_intents = list(/datum/intent/dagger/cut, /datum/intent/dagger/thrust, /datum/intent/dagger/chop)
 	name = "hunting knife"
@@ -109,7 +109,7 @@
 	icon_state = "huntingknife"
 	max_blade_int = 140
 	max_integrity = INTEGRITY_STRONG
-	wdefense = MEDIOCHRE_PARRY
+	wdefense = MEDIOCRE_PARRY
 	wbalance = HARD_TO_DODGE
 	smeltresult = /obj/item/ingot/steel
 	sellprice = 30
@@ -142,7 +142,7 @@
 /obj/item/rogueweapon/knife/cleaver/combat
 	name = "hack-knife"
 	desc = "A short blade that even the weakest of hands can aspire to do harm with."
-	force = 10
+	force = DAMAGE_KNIFE
 	possible_item_intents = list(/datum/intent/dagger/cut, /datum/intent/dagger/chop)
 	icon_state = "combatknife"
 	throwforce = 16
@@ -164,7 +164,8 @@
 
 //................ Iron Dagger ............... //
 /obj/item/rogueweapon/knife/dagger
-	possible_item_intents = list(/datum/intent/dagger/cut, /datum/intent/dagger/thrust)
+	force = DAMAGE_DAGGER
+	possible_item_intents = list(/datum/intent/dagger/thrust, /datum/intent/dagger/cut) //Stabbing is the first intent, for convenience.
 	name = "iron dagger"
 	desc = "Thin, sharp, pointed death."
 	icon_state = "idagger"
@@ -173,16 +174,19 @@
 
 //................ Steel Dagger ............... //
 /obj/item/rogueweapon/knife/dagger/steel
+	force = DAMAGE_GOOD_DAGGER
 	name = "steel dagger"
 	desc = "A dagger made of refined steel."
 	icon_state = "sdagger"
 	smeltresult = null
 	wdefense = AVERAGE_PARRY
 	wbalance = VERY_HARD_TO_DODGE
+	sellprice = 20
 
 /obj/item/rogueweapon/knife/dagger/steel/special
 	icon_state = "sdaggeralt"
 	desc = "A dagger of refined steel, and even more refined appearance."
+	sellprice = 25
 
 //................ Fanged dagger ............... //
 /obj/item/rogueweapon/knife/dagger/steel/dirk
@@ -200,7 +204,8 @@
 	max_blade_int = 112 // .8 of steel
 	max_integrity = 240 // .8 of steel
 	sellprice = 45
-	var/last_used = 0
+	last_used = 0
+	is_silver = TRUE
 
 /obj/item/rogueweapon/knife/dagger/silver/pickup(mob/user)
 	. = ..()
@@ -233,52 +238,6 @@
 		if(V_lord)
 			if(V_lord.vamplevel < 4 && !H.mind.has_antag_datum(/datum/antagonist/vampirelord/lesser))
 				H.Knockdown(10)
-
-/obj/item/rogueweapon/knife/dagger/silver/funny_attack_effects(mob/living/target, mob/living/user = usr, nodmg)
-	if(world.time < src.last_used + 100)
-		to_chat(user, "<span class='notice'>The silver effect is on cooldown.</span>")
-		return
-
-	. = ..()
-	if(ishuman(target))
-		var/mob/living/carbon/human/s_user = user
-		var/mob/living/carbon/human/H = target
-		var/datum/antagonist/vampirelord/lesser/V = FALSE
-		if(H.mind?.has_antag_datum(/datum/antagonist/vampirelord/lesser))
-			V =  H.mind.has_antag_datum(/datum/antagonist/vampirelord/lesser)
-		var/datum/antagonist/vampirelord/V_lord = FALSE
-		if(H.mind.has_antag_datum(/datum/antagonist/vampirelord/))
-			V_lord = H.mind.has_antag_datum(/datum/antagonist/vampirelord/)
-		if(V)
-			if(V.disguised)
-				H.visible_message("<font color='white'>The silver weapon manifests the [H] curse!</font>")
-				to_chat(H, "<span class='userdanger'>I'm hit by my BANE!</span>")
-				H.Knockdown(20)
-				H.fire_act(1,4)
-				H.apply_status_effect(/datum/status_effect/debuff/silver_curse)
-				src.last_used = world.time
-			else
-				to_chat(H, "<span class='userdanger'>I'm hit by my BANE!</span>")
-				H.Knockdown(20)
-				H.fire_act(1,4)
-				H.apply_status_effect(/datum/status_effect/debuff/silver_curse)
-				src.last_used = world.time
-		if(V_lord)
-			if(V_lord.vamplevel < 4 && !V)
-				to_chat(H, "<span class='userdanger'>I'm hit by my BANE!</span>")
-				H.Knockdown(10)
-				H.fire_act(1,4)
-				src.last_used = world.time
-			if(V_lord.vamplevel == 4 && !V)
-				s_user.Knockdown(10)
-				to_chat(s_user, "<font color='red'> The silver weapon fails!</font>")
-				H.visible_message(H, "<span class='userdanger'>This feeble metal can't hurt me, I HAVE TRANSCENDED!</span>")
-		return
-	//I hate that i have to add a unique line of this code to EVERY silver weapon because they dont share a universal unique damage. -IP
-	//if is non carbon undead burn the fuck.
-	if((target.mob_biotypes & MOB_UNDEAD))
-		target.adjustFireLoss(25)
-		return
 
 //................ Profane Dagger ............... //
 /obj/item/rogueweapon/knife/dagger/steel/profane
@@ -392,15 +351,15 @@
 
 //................ Stone Knife ............... //
 /obj/item/rogueweapon/knife/stone
-	force = DAMAGE_KNIFE
+	force = DAMAGE_WEAK_KNIFE
 	throwforce = DAMAGE_KNIFE
 	possible_item_intents = list(/datum/intent/dagger/cut,/datum/intent/dagger/chop)
 	name = "stone knife"
-	desc = "A tool favored by the wood-elves, easy to make, useful for skinning the flesh of beast and man alike."
+	desc = "A tool favored by poor woodland inhabitants, easy to make, useful for skinning the flesh of beast and man alike."
 	icon_state = "stone_knife"
 	resistance_flags = FLAMMABLE // Weapon made mostly of wood
-	max_integrity = 30
-	max_blade_int = 30
+	max_integrity = 28
+	max_blade_int = 28
 	wdefense = TERRIBLE_PARRY
 	smeltresult = /obj/item/ash
 	sellprice = 5
@@ -410,8 +369,10 @@
 /obj/item/rogueweapon/knife/villager
 	possible_item_intents = list(/datum/intent/dagger/cut, /datum/intent/dagger/thrust, /datum/intent/dagger/chop)
 	name = "villager knife"
-	desc = "The loyal companion of simple peasants, able to cut hard bread and carve wood. A versatile kitchen utensil and tool."
+	desc = "The loyal companion of simple peasants, for cutting hard bread and carving wood."
 	icon_state = "villagernife"
+	force = DAMAGE_WEAK_KNIFE
+	smeltresult = null // Enough of this exploit. Three can be crafted or more ordered, so no smelting them.
 
 /obj/item/rogueweapon/knife/copper
 	possible_item_intents = list(/datum/intent/dagger/cut, /datum/intent/dagger/thrust)
@@ -426,4 +387,58 @@
 	smeltresult = /obj/item/ash
 	sellprice = 10
 
+///////////////////////////////////////////////////////////////////
+// Part of Kaizoku project that is still yet to be finished.     //
+// The Demo usage is meant for Stonekeep and Warmongers.		 //
+// If the usage for other sources is desired, before it finishes,//
+// ask monochrome9090 for permission. Respect the artists's will.//
+// If you want this quality content, COMMISSION me instead. 	 //
+// For this project, requirements are low, and mostly lore-based.//
+// I just do not desire for the Abyssariads to be butchered.	 //
+///////////////////////////////////////////////////////////////////
 
+// Parent Kaizoku knife, for all intents and purposes of checks for seppuku and such.
+/obj/item/rogueweapon/knife/kaizoku
+	name = "parent Kaizoku knife"
+	desc = "You should not see be seeing this. Yell at coders or mappers for fucking up."
+	icon = 'icons/roguetown/kaizoku/weapons/32.dmi'
+	possible_item_intents = list(/datum/intent/dagger/cut, /datum/intent/dagger/thrust) // None of them have chop
+	smeltresult = null // As every dagger craftable by pairs made of good metal
+
+
+/obj/item/rogueweapon/knife/kaizoku/kunai //Practically a villager knife with more utility. It helps others to climb walls.
+	name = "kunai"
+	desc = "A simple stabbing weapon made of iron which originated as a masonry or gardening tool, useful for climbing walls in similar ways to pitons."
+	icon_state = "kunai"
+	force = DAMAGE_WEAK_KNIFE
+	wbalance = VERY_HARD_TO_DODGE
+
+/obj/item/rogueweapon/knife/kaizoku/kaiken
+	name = "iron kaiken"
+	desc = "The weapon laws in colonized Abyssariad islands, with high humen or elven population, forbade non-warriors from carrying blades in public, so abyssariad colonists made weapons such as this."
+	icon_state = "kaiken"
+	force = DAMAGE_DAGGER
+	max_integrity = INTEGRITY_STRONG
+	sellprice = 15
+
+/obj/item/rogueweapon/knife/kaizoku/tanto
+	name = "steel tanto"
+	desc = "Initially a companion blade to the tachi in a zamurai's daisho, the tanto was later replaced by the wakizashi with the shift to infantry tactics after the Bloody Apotheosis."
+	icon_state = "tanto"
+	force = DAMAGE_GOOD_DAGGER
+	max_integrity = INTEGRITY_STRONGER
+	w_class = WEIGHT_CLASS_NORMAL
+	wdefense = AVERAGE_PARRY
+	wbalance = VERY_HARD_TO_DODGE
+	sellprice = 20
+
+/obj/item/rogueweapon/knife/kaizoku/sai //I love gundam for helping me on my request on this sai. I love HIM!!!!!!!!!!!!! -Monochrome
+	name = "sai"
+	desc = "Recognizable by its uniqueness and typically carried in pairs, the sai features a sharply-tapered central rod with two prongs at the cross-guards. It lacks blade for cutting, but it excels in jabbing and defending against other weapons."
+	icon_state = "sai"
+	w_class = WEIGHT_CLASS_NORMAL
+	force = DAMAGE_KNIFE+1
+	max_integrity = INTEGRITY_STRONG
+	smeltresult = null
+	wdefense = 5
+	wbalance = VERY_HARD_TO_DODGE

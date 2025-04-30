@@ -276,23 +276,6 @@
 		if(!istype(M, /obj/item/clothing))
 			if(prob(I.block_chance*2))
 				return
-
-/mob/living/get_photo_description(obj/item/camera/camera)
-	var/list/mob_details = list()
-	var/list/holding = list()
-	var/len = length(held_items)
-	if(len)
-		for(var/obj/item/I in held_items)
-			if(!holding.len)
-				holding += "They are holding \a [I]"
-			else if(held_items.Find(I) == len)
-				holding += ", and \a [I]."
-			else
-				holding += ", \a [I]"
-	holding += "."
-	mob_details += "You can also see [src] on the photo[health < (maxHealth * 0.75) ? ", looking a bit hurt":""][holding ? ". [holding.Join("")]":"."]."
-	return mob_details.Join("")
-
 //Called when we bump onto an obj
 /mob/living/proc/ObjBump(obj/O)
 	return
@@ -736,8 +719,6 @@
 	resting = rest
 	update_resting()
 	if(rest == resting)
-		if(sexcon)
-			sexcon.mob_moved()
 		if(resting)
 			if(m_intent == MOVE_INTENT_RUN)
 				toggle_rogmove_intent(MOVE_INTENT_WALK, TRUE)
@@ -751,6 +732,7 @@
 		else
 			to_chat(src, "<span class='warning'>I fail to get up!</span>")
 	update_cone_show()
+	SEND_SIGNAL(src, COMSIG_LIVING_SET_RESTING, rest)
 
 /mob/living/proc/update_resting()
 	update_rest_hud_icon()
@@ -790,6 +772,7 @@
 	update_stat()
 	med_hud_set_health()
 	med_hud_set_status()
+	SEND_SIGNAL(src, COMSIG_LIVING_HEALTH_UPDATE)
 
 //Proc used to resuscitate a mob, for full_heal see fully_heal()
 /mob/living/proc/revive(full_heal = FALSE, admin_revive = FALSE)
@@ -966,8 +949,6 @@
 		stop_looking()
 		if(doing)
 			doing = 0
-		if(sexcon)
-			sexcon.mob_moved()
 		if(client)
 			update_vision_cone()
 
@@ -1054,10 +1035,6 @@
 
 	changeNext_move(CLICK_CD_RESIST)
 
-	if(sexcon)
-		if(sexcon.cancel_our_actions())
-			return
-
 	if(atkswinging)
 		stop_attack(FALSE)
 
@@ -1067,11 +1044,6 @@
 		log_combat(src, pulledby, "resisted grab")
 		resist_grab()
 		return
-
-	if(!restrained(ignore_grab = 1) && !pulledby)
-		if(sexcon)
-			if(sexcon.cancel_others_actions())
-				return
 
 	//unbuckling yourself
 	if(buckled && last_special <= world.time)
@@ -1097,18 +1069,53 @@
 	if(stat)
 		return
 	surrendering = 1
-	if(alert(src, "Yield in surrender?",,"YES","NO") == "YES")
-		changeNext_move(CLICK_CD_EXHAUSTED)
-		var/image/flaggy = image('icons/effects/effects.dmi',src,"surrender",ABOVE_MOB_LAYER)
-		flaggy.appearance_flags = RESET_TRANSFORM|KEEP_APART
-		flaggy.transform = null
-		flaggy.pixel_y = 12
-		flick_overlay_view(flaggy, src, 150)
-		Stun(150)
-		src.visible_message("<span class='notice'>[src] yields!</span>")
-		playsound(src, 'sound/misc/surrender.ogg', 100, FALSE, -1)
-		sleep(150)
-	surrendering = 0
+	if(ishuman(src))
+		var/mob/living/carbon/human/C = src
+		if((C.dna.species?.id == "abyssariad") && (!C.burakumin))//Non-burakumin Abyssariads cannot surrender. Burakumins follows no Abyssal code, so they can.
+			if(C.stat != CONSCIOUS && !C.handcuffed)
+				to_chat(src, "<span class='warning'>You cannot do this ritual while unable to reach your chest.</span>")
+				return
+			else
+				if(alert(src, "Commit ritualistic disembowelment?",,"YES","NO") == "YES")
+					var/obj/item/inhand = C.get_active_held_item()
+					if(inhand)
+						if(istype(inhand, /obj/item/rogueweapon/knife/kaizoku || /obj/item/rogueweapon/sword))
+							say("Hesitation is DEFEAT!")
+							visible_message("<span class='warning'> used [inhand] to carve their own guts before splitting themselves apart!</span>", \
+							"<span class='notice'>You voluntarily sever your boundaries to this consciousness as abyssal vitae spills out in waves.</span>", null, null, pulledby)
+							to_chat(C, "<span class='warning'>Your ancestors honors your sacrifice.</span>")
+							apply_damage(250, BRUTE, "chest", run_armor_check("chest", "melee", damage = 10))
+							spill_organs(FALSE, FALSE, TRUE)
+							spawn_gibs()
+							adjust_triumphs(1)
+						else
+							to_chat(C, "<span class='warning'>Traditionally, you should use a tanto for that. But any knife or sword will do.</span>")
+					else
+						if(C.champion) //Champions requires no weapon for this ritual. Why? They are badasses, of course. That's the entire explanation.
+							say("Hesitation is DEFEAT!")
+							visible_message("<span class='warning'>'s claws carves their own guts before splitting themselves apart!</span>", \
+							"<span class='notice'>You voluntarily sever your boundaries to this consciousness as abyssal vitae spills out in waves.</span>", null, null, pulledby)
+							to_chat(C, "<span class='warning'>Your ancestors honors your sacrifice.</span>")
+							apply_damage(250, BRUTE, "chest", run_armor_check("chest", "melee", damage = 10))
+							spill_organs(FALSE, FALSE, TRUE)
+							spawn_gibs()
+							adjust_triumphs(1)
+						else
+							to_chat(C, "<span class='warning'>You must hold a bladed weapon to perform this ritual.</span>")
+				surrendering = 0
+		else
+			if(alert(src, "Yield in surrender?",,"YES","NO") == "YES")
+				changeNext_move(CLICK_CD_EXHAUSTED)
+				var/image/flaggy = image('icons/effects/effects.dmi',src,"surrender",ABOVE_MOB_LAYER)
+				flaggy.appearance_flags = RESET_TRANSFORM|KEEP_APART
+				flaggy.transform = null
+				flaggy.pixel_y = 12
+				flick_overlay_view(flaggy, src, 150)
+				Stun(150)
+				src.visible_message("<span class='notice'>[src] yields!</span>")
+				playsound(src, 'sound/misc/surrender.ogg', 100, FALSE, -1)
+				sleep(150)
+			surrendering = 0
 
 
 /mob/proc/stop_attack(message = FALSE)
@@ -1323,13 +1330,6 @@
 		else
 			src << browse(null,"window=mob[REF(who)]")
 
-/mob/living/singularity_pull(S, current_size)
-	..()
-	if(current_size >= STAGE_SIX) //your puny magboots/wings/whatever will not save you against supermatter singularity
-		throw_at(S, 14, 3, src, TRUE)
-	else if(!src.mob_negates_gravity())
-		step_towards(src,S)
-
 /mob/living/proc/do_jitter_animation(jitteriness)
 	var/amplitude = min(4, (jitteriness/100) + 1)
 	var/pixel_x_diff = rand(-amplitude, amplitude)
@@ -1386,9 +1386,6 @@
 	if(user != null && src == user)
 		return FALSE
 	if(invisibility || alpha == 0)//cloaked
-		return FALSE
-	// Now, are they viewable by a camera? (This is last because it's the most intensive check)
-	if(!near_camera(src))
 		return FALSE
 	return TRUE
 
@@ -1508,6 +1505,11 @@
 //Mobs on Fire
 /mob/living/proc/IgniteMob()
 	if(fire_stacks > 0 && !on_fire)
+		var/obj/item/mainhand = get_active_held_item()
+		if(istype(mainhand, /obj/item/rogueweapon/sword/dragonslayer)) //Since fire immunity by armor didn't work, this will. Feel free to improve my code.
+			src.visible_message("<span class='warning'>[src]'s sword reflects the fire off!</span>", \
+							"<span class='danger'>The abyssal blessings protected me from the fire!</span>")
+			return FALSE
 		testing("ignis")
 		on_fire = 1
 		src.visible_message("<span class='warning'>[src] catches fire!</span>", \
@@ -1627,6 +1629,7 @@
 	else
 		mobility_flags |= MOBILITY_STAND
 		lying = 0
+	update_cone_show()
 
 /*
 	if(should_be_lying || restrained || incapacitated())
@@ -1704,14 +1707,6 @@
 		statpanel("[A.panel]",A.get_panel_text(),A)
 
 /mob/living/lingcheck()
-	if(mind)
-		var/datum/antagonist/changeling/changeling = mind.has_antag_datum(/datum/antagonist/changeling)
-		if(changeling)
-			if(changeling.changeling_speak)
-				return LINGHIVE_LING
-			return LINGHIVE_OUTSIDER
-	if(mind && mind.linglink)
-		return LINGHIVE_LINK
 	return LINGHIVE_NONE
 
 /mob/living/forceMove(atom/destination)
@@ -1916,7 +1911,7 @@
 				var/obj/item/restraints/legcuffs/beartrap/M = O
 				if(isturf(M.loc) && M.armed)
 					found_ping(get_turf(M), client, "trap")
-			if(istype(O, /obj/structure/flora/roguegrass/maneater/real))
+			if(istype(O, /obj/structure/flora/roguegrass/maneater/real || /obj/structure/abyssaltomb))
 				found_ping(get_turf(O), client, "trap")
 
 /proc/found_ping(atom/A, client/C, state)

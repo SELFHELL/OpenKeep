@@ -15,11 +15,13 @@
 #define DAMAGE_MACE_WIELD 25
 #define DAMAGE_HEAVYCLUB_WIELD 30
 
+#define DAMAGE_WEAK_KNIFE 8
 #define DAMAGE_KNIFE 10
 #define DAMAGE_DAGGER 12
+#define DAMAGE_GOOD_DAGGER 14
 
-#define DAMAGE_STAFF 10
-#define DAMAGE_STAFF_WIELD 15
+#define DAMAGE_STAFF 12
+#define DAMAGE_STAFF_WIELD 23 //Even a wooden quarterstaff is a devastating weapon.
 #define DAMAGE_SPEAR 15
 #define DAMAGE_SPEARPLUS 18
 #define DAMAGE_SPEAR_WIELD 25
@@ -34,32 +36,40 @@
 #define DAMAGE_WHIP 20
 
 // ===== AP DEFINES =======
-#define AP_AXE_CUT 5
-#define AP_AXE_CHOP 10
+#define AP_AXE_CUT 10
+#define AP_AXE_CHOP 15
 #define AP_HEAVYAXE_CHOP 25
 #define AP_HEAVYAXE_STAB 35
+
 #define AP_FLAIL_STRIKE 5
-#define AP_CLUB_STRIKE 20
 #define AP_FLAIL_SMASH 60
-#define AP_CLUB_SMASH 25
-#define AP_HEAVY_SMASH 35
-#define AP_SPEAR_THRUST 20
-#define AP_POLEARM_THRUST 40
+#define AP_CLUB_STRIKE 25
+#define AP_CLUB_SMASH 35
+#define AP_HEAVY_SMASH 45
+
+#define AP_SPEAR_POKE 20
+#define AP_POLEARM_THRUST 45
 #define AP_POLEARM_BASH 5
-#define AP_POLEARM_CHOP 20
+#define AP_POLEARM_CHOP 30 //Slightly less AP than a heavy axe's chop, still represents the ease with which a halberd or similar chop could get through earlier maille.
+
 #define AP_SWORD_THRUST 20
 #define AP_SWORD_CHOP 5
+#define AP_SABRE_CUT 18
+#define AP_SABRE_CHOP 13
+#define AP_RAPIER_THRUST 30
+
 #define AP_DAGGER_STAB 30
 #define AP_DAGGER_PICK 40
+#define AP_PICK 45
 
 //wdefense defines
 #define TERRIBLE_PARRY -1
 #define BAD_PARRY 0
-#define MEDIOCHRE_PARRY 1
+#define MEDIOCRE_PARRY 1
 #define AVERAGE_PARRY 2
-#define GOOD_PARRY 3
-#define GREAT_PARRY 4
-#define ULTMATE_PARRY 5
+#define GOOD_PARRY 2.5
+#define GREAT_PARRY 3
+#define ULTMATE_PARRY 4
 
 //wbalance defines
 #define VERY_EASY_TO_DODGE -2

@@ -143,6 +143,11 @@
 							new /obj/item/clothing/neck/roguetown/mercmedal/boltslinger(src.loc)
 						if(7)
 							new /obj/item/clothing/neck/roguetown/mercmedal/anthrax(src.loc)
+						if(8)
+							new /obj/item/clothing/neck/roguetown/mercmedal/toweryakko(src.loc)
+						if(9)
+							new /obj/item/clothing/neck/roguetown/mercmedal/kabukimaru(src.loc)
+
 				if(C.signed == 0)
 					to_chat(H, "<span class='warning'>I cannot send an unsigned token.</span>")
 					return
@@ -243,10 +248,10 @@
 	cut_overlays()
 	if(coin_loaded)
 		add_overlay(mutable_appearance(icon, "mail-f"))
-		set_light(1, 1, "#ff0d0d")
+		set_light(1, 1, 1, l_color =  "#ff0d0d")
 	else
 		add_overlay(mutable_appearance(icon, "mail-s"))
-		set_light(1, 1, "#1b7bf1")
+		set_light(1, 1, 1, l_color =  "#1b7bf1")
 
 /obj/structure/roguemachine/mail/examine(mob/user)
 	. = ..()
@@ -293,7 +298,7 @@
 		icon_state = "mailspecial-get"
 	else
 		icon_state = "mailspecial"
-	set_light(1, 1, "#ff0d0d")
+	set_light(1, 1, 1, l_color = "#ff0d0d")
 
 /obj/item/roguemachine/mastermail/ComponentInitialize()
 	. = ..()

@@ -20,7 +20,7 @@
 	display_order = JDO_PRINCE
 	give_bank_account = TRUE
 	bypass_lastclass = TRUE
-	min_pq = 2
+	min_pq = 0
 
 /datum/job/roguetown/prince/after_spawn(mob/living/L, mob/M, latejoin = TRUE)
 	..()
@@ -60,6 +60,7 @@
 		armor = /obj/item/clothing/suit/roguetown/armor/leather/jacket/silk_coat
 		shirt = /obj/item/clothing/suit/roguetown/shirt/dress/silkdress/princess
 		shoes = /obj/item/clothing/shoes/roguetown/shortboots
+		pants = /obj/item/clothing/under/roguetown/tights/stockings/silk/random
 		belt = /obj/item/storage/belt/rogue/leather/cloth/lady
 		beltl = /obj/item/roguekey/manor
 		backr = /obj/item/storage/backpack/rogue/satchel

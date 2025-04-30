@@ -109,7 +109,8 @@
 	//Familytree datum
 	//I dont know how to do UI huds so this will have to do for now.
 	var/family_UI = FALSE
-	var/spouse_name
+	var/mob/living/carbon/spouse_mob
+	var/image/spouse_indicator
 	var/setspouse
 	var/familytree_pref = FAMILY_NONE
 	var/datum/heritage/family_datum
@@ -132,6 +133,14 @@
 
 	// Boolean. Usually set only to TRUE for non-Eoran church roles.
 	var/virginity = FALSE
+
+	// Another Boolean. But this time entirely for Kaizoku content to define those whom Abyssariads considers 'impure', and for champions.
+	var/burakumin = FALSE
+	var/champion = FALSE
+
+	//a var used for a rather niched power.
+	var/purification = FALSE
+
 
 	possible_rmb_intents = list(/datum/rmb_intent/feint,\
 	/datum/rmb_intent/aimed,\

@@ -13,9 +13,16 @@ Format:
 	votable (is this map votable)
 endmap
 
-map rogueworld
+map dun_manor
 	default
-	#voteweight 1.5
 	votable
 endmap
 
+map stonehamlet
+	disabled
+	votable
+endmap
+
+map roguetown
+	votable
+endmap

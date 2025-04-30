@@ -35,7 +35,7 @@
 	disliked_food = NONE
 	liked_food = NONE
 	possible_ages = list(AGE_ADULT, AGE_MIDDLEAGED, AGE_OLD)
-	changesource_flags = MIRROR_BADMIN | WABBAJACK | MIRROR_MAGIC | MIRROR_PRIDE | ERT_SPAWN | RACE_SWAP | SLIME_EXTRACT
+	changesource_flags = MIRROR_BADMIN | WABBAJACK | MIRROR_MAGIC | MIRROR_PRIDE | RACE_SWAP | SLIME_EXTRACT
 	limbs_icon_m = 'icons/roguetown/mob/bodies/m/met.dmi'
 	limbs_icon_f = 'icons/roguetown/mob/bodies/f/ft.dmi'
 	dam_icon = 'icons/roguetown/mob/bodies/dam/dam_male.dmi'
@@ -91,7 +91,9 @@
 		"Coastal Elf" = SKIN_COLOR_COASTAL_ELF,
 		"Wood Elf" = SKIN_COLOR_WOOD_ELF,
 		"Sea Elf" = SKIN_COLOR_SEA_ELF,
-		"Sand Elf" = SKIN_COLOR_SAND_ELF,
+		"Jungle Elf" = SKIN_COLOR_JUNGLE_ELF,
+		"Savannah Elf" = SKIN_COLOR_SAVANNAH_ELF,
+		"Sand Elf" = SKIN_COLOR_SAND_ELF
 	))
 
 /datum/species/elf/snow/get_hairc_list()
@@ -151,5 +153,5 @@
 /datum/species/elf/snow/random_surname()
 	return " [pick(world.file2list("strings/rt/names/elf/elfwlast.txt"))]"
 
-//datum/species/elf/snow/get_accent_list()
+//datum/species/elf/snow/get_accent(mob/living/carbon/human/H)
 //	return strings("russian_replacement.json", "russian")

@@ -294,12 +294,10 @@
 			var/more = ""
 			if(M)
 				more = "[ADMIN_LOOKUPFLW(M)] "
-			if(!istype(carry.my_atom, /obj/machinery/plumbing))
-				message_admins("Smoke: ([ADMIN_VERBOSEJMP(location)])[contained]. Key: [more ? more : carry.my_atom.fingerprintslast].")
+			message_admins("Smoke: ([ADMIN_VERBOSEJMP(location)])[contained]. Key: [more ? more : carry.my_atom.fingerprintslast].")
 			log_game("A chemical smoke reaction has taken place in ([where])[contained]. Last touched by [carry.my_atom.fingerprintslast].")
 		else
-			if(!istype(carry.my_atom, /obj/machinery/plumbing))
-				message_admins("Smoke: ([ADMIN_VERBOSEJMP(location)])[contained]. No associated key.")
+			message_admins("Smoke: ([ADMIN_VERBOSEJMP(location)])[contained]. No associated key.")
 			log_game("A chemical smoke reaction has taken place in ([where])[contained]. No associated key.")
 
 
@@ -338,3 +336,22 @@
 	smoke.effect_type = smoke_type
 	smoke.set_up(range, location)
 	smoke.start()
+
+/////////////////////////////////////////////
+// kaizoku stupid smoke
+/////////////////////////////////////////////
+
+/obj/effect/particle_effect/smoke/bad/stupid
+	lifetime = 20
+	color = "#1b802c"
+	opaque = FALSE
+
+/obj/effect/particle_effect/smoke/bad/stupid/smoke_mob(mob/living/carbon/M)
+	if(..())
+		M.add_nausea(4)
+		M.adjustToxLoss(5, 0)
+		M.emote("cough")
+		return 1
+
+/datum/effect_system/smoke_spread/bad/stupid
+	effect_type = /obj/effect/particle_effect/smoke/bad/stupid

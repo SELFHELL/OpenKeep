@@ -46,14 +46,6 @@
 /turf/open/floor/rogue/ruinedwood/chevron
 	icon_state = "weird2"
 
-/*	..................   Darker version   ................... */
-/turf/open/floor/rogue/ruinedwood/darker // here problem was opposite, too bright wood for bandit lair
-	color = "#d9c9b0"
-/turf/open/floor/rogue/ruinedwood/turned/darker
-	color = "#d9c9b0"
-
-/turf/open/floor/rogue/tile/kitchen // faded kitchen, too dark floors look bad IMO, this much nicer
-	icon_state = "tavern"
 
 /turf/open/floor/rogue/twig
 	icon_state = "twig"
@@ -167,7 +159,8 @@
 						/turf/open/floor/rogue/grass/cold,
 						/turf/open/floor/rogue/snow,
 						/turf/open/floor/rogue/snow/patchy,
-						/turf/open/floor/rogue/snow/rough)
+						/turf/open/floor/rogue/snow/rough,
+						/turf/open/floor/rogue/dirt)
 
 /turf/open/floor/rogue/grass/Initialize()
 	dir = pick(GLOB.cardinals)
@@ -362,24 +355,35 @@
 						/turf/open/floor/rogue/grass/cold,
 						/turf/open/floor/rogue/snow,
 						/turf/open/floor/rogue/snow/patchy,
-						/turf/open/floor/rogue/snow/rough)
+						/turf/open/floor/rogue/snow/rough,
+						/turf/open/water/swamp,
+						/turf/open/water/cleanshallow)
 	neighborlay = "dirtedge"
 	var/muddy = FALSE
 	var/bloodiness = 20
 	var/obj/structure/closet/dirthole/holie
 	var/obj/machinery/crop/planted_crop
 	var/dirt_amt = 3
-/*
+
 /turf/open/floor/rogue/dirt/get_slowdown(mob/user)
 	var/returned = slowdown
+	var/negate_slowdown = FALSE
+
 	for(var/obj/item/I in user.held_items)
 		if(I.walking_stick)
 			if(!I.wielded)
 				var/mob/living/L = user
 				if(!L.cmode)
-					returned = max(returned-2, 0)
+					negate_slowdown = TRUE
+
+	if(HAS_TRAIT(user, TRAIT_LONGSTRIDER))
+		negate_slowdown = TRUE
+
+	if(negate_slowdown)
+		returned = max(returned-2, 0)
+
 	return returned
-*/
+
 
 /turf/open/floor/rogue/dirt/attack_right(mob/user)
 	if(isliving(user))
@@ -498,7 +502,8 @@
 	smooth = SMOOTH_TRUE
 	canSmoothWith = list(/turf/open/floor/rogue,
 						/turf/closed/mineral,
-						/turf/closed/wall/mineral)
+						/turf/closed/wall/mineral,
+						/turf/open/floor/rogue/dirt)
 	neighborlay = "dirtedge"
 	slowdown = 0
 
@@ -599,7 +604,7 @@
 	canSmoothWith = list(/turf/open/floor/rogue,
 						/turf/closed/mineral,
 						/turf/closed/wall/mineral)
-	slowdown = 0
+//	slowdown = 0
 
 /turf/open/floor/rogue/underworld/road/Initialize()
 	. = ..()
@@ -634,6 +639,7 @@
 	heavyfootstep = FOOTSTEP_GENERIC_HEAVY
 	landsound = 'sound/foley/jumpland/stoneland.wav'
 	smooth = SMOOTH_MORE
+	slowdown = -0.2
 	canSmoothWith = list(/turf/closed/mineral/rogue,
 						/turf/closed/mineral,
 						/turf/closed/wall/mineral/rogue/stonebrick,
@@ -844,6 +850,7 @@
 	landsound = 'sound/foley/jumpland/stoneland.wav'
 	neighborlay = "herringedge"
 	smooth = SMOOTH_TRUE
+	slowdown = -0.5
 	canSmoothWith = list(/turf/open/floor/rogue/herringbone,
 						/turf/open/floor/rogue/blocks,
 						/turf/open/floor/rogue/dirt,
@@ -929,7 +936,7 @@
 /turf/open/floor/rogue/cobblerock/cardinal_smooth(adjacencies)
 	roguesmooth(adjacencies)
 
-/obj/effect/decal/cobbleedge
+/obj/effect/decal/turfedge_neu
 	name = ""
 	desc = ""
 	icon = 'icons/turf/roguefloor.dmi'
@@ -962,46 +969,145 @@
 						/turf/open/floor/rogue/snow/patchy,
 						/turf/open/floor/rogue/snow/rough)
 
+
+// ==============================================================
+/*	..................   PigTurfs   ................... */
+/turf/open/floor/rogue/sandstone
+	icon_state = "sandstone"
+	footstep = FOOTSTEP_STONE
+	barefootstep = FOOTSTEP_HARD_BAREFOOT
+	clawfootstep = FOOTSTEP_HARD_CLAW
+	heavyfootstep = FOOTSTEP_GENERIC_HEAVY
+	landsound = 'sound/foley/jumpland/stoneland.wav'
+	smooth = SMOOTH_MORE
+	canSmoothWith = list(/turf/closed/mineral/rogue,
+						/turf/open/floor/rogue/herringbone,
+						/turf/closed/mineral,
+						/turf/closed/wall/mineral/rogue/stonebrick,
+						/turf/closed/wall/mineral/rogue/wood,
+						/turf/closed/wall/mineral/rogue/wooddark,
+						/turf/closed/wall/mineral/rogue/stone,
+						/turf/closed/wall/mineral/rogue/stone/moss,
+						/turf/open/floor/rogue/cobble,
+						/turf/open/floor/rogue/dirt,
+						/turf/open/floor/rogue/grass,
+						/turf/open/floor/rogue/grass/red,
+						/turf/open/floor/rogue/grass/yel,
+						/turf/open/floor/rogue/grass/cold,
+						/turf/open/floor/rogue/snow,
+						/turf/open/floor/rogue/snow/patchy,
+						/turf/open/floor/rogue/snow/rough,
+						/turf/open/floor/rogue/sandstone,
+						/turf/open/floor/rogue/sandstone/temple)
+
+/turf/open/floor/rogue/sandstone/shaded
+	color = "#e5dfdf"
+
+/turf/open/floor/rogue/sandstone/temple
+	icon_state = "temple"
+/turf/open/floor/rogue/sandstone/temple/Initialize()
+	dir = pick(GLOB.cardinals)
+	. = ..()
+
+/turf/open/water/bath/pool
+	desc = "Clear water, pleasant temperature. Soothing."
+	icon_state = "bathtile_pool"
+/turf/open/water/bath/pool/Initialize()
+	.  = ..()
+	icon_state = "bathtile_pool"
+
+/turf/open/water/bath/pool/mid
+	icon_state = "bathtile_pool_mid"
+/turf/open/water/bath/pool/mid/Initialize()
+	.  = ..()
+	icon_state = "bathtile_pool_mid"
+
+/turf/open/floor/rogue/grass/yelmix
+	name = "grass"
+	icon_state = "grass_yelmix"
+	smooth = SMOOTH_FALSE
+	neighborlay = ""
+
+/turf/open/floor/rogue/grass/near_tree
+	color = "#ff0000"
+/turf/open/floor/rogue/grass/near_tree/Initialize()
+	color = "#ffffff"
+	. = ..()
+
+/turf/open/floor/rogue/grass/peril	// for ambushes
+	color = "#d89d9d"
+/turf/open/floor/rogue/grass/peril/Initialize()
+	color = "#ffffff"
+	. = ..()
+
+/turf/open/floor/rogue/oak	// new oak
+	icon_state = "oak"
+/turf/open/floor/rogue/oak/broken
+	icon_state = "oak_broken"
+/turf/open/floor/rogue/oak/stage
+	icon_state = "stageoak_bl"
+
 /turf/open/floor/rogue/cobble/alt
 	icon_state = "cobblestonealt1"
-
+	canSmoothWith = list(/turf/open/floor/rogue/cobble)
+	smooth = SMOOTH_FALSE
+	smooth_diag = FALSE
 /turf/open/floor/rogue/cobble/alt/Initialize()
 	. = ..()
 	icon_state = "cobblestonealt[rand(1,3)]"
 
-/turf/open/floor/rogue/cobblerock/alt
+/turf/open/floor/rogue/cobblerock_alt
 	icon_state = "cobblealt1"
+	canSmoothWith = list(/turf/open/floor/rogue/cobblerock)
+	smooth = SMOOTH_FALSE
+	smooth_diag = FALSE
+	footstep = FOOTSTEP_STONE
+	barefootstep = FOOTSTEP_HARD_BAREFOOT
+	clawfootstep = FOOTSTEP_HARD_CLAW
+	heavyfootstep = FOOTSTEP_GENERIC_HEAVY
+	landsound = 'sound/foley/jumpland/stoneland.wav'
+	neighborlay = ""
 
-/turf/open/floor/rogue/cobblerock/alto
-	icon_state = "cobblealt2"
+/turf/open/floor/rogue/cobblerock_alt/Initialize()
+	. = ..()
+	icon_state = "cobblealt[rand(1,3)]"
 
-/obj/effect/decal/cobbleedge/rockalt_edge
+/obj/effect/decal/turfedge_neu/rockalt_edge
 	icon_state = "cobblealt_edges"
 
-/obj/effect/decal/cobbleedge/rockalt_corners
+/obj/effect/decal/turfedge_neu/rockalt_corners
 	icon_state = "cobblealt_corners"
 
-/obj/effect/decal/cobbleedge/alt
+/obj/effect/decal/turfedge_neu/alt
 	icon_state = "cobblestonealt_edges"
 
-/obj/effect/decal/cobbleedge/alt_small
+/obj/effect/decal/turfedge_neu/alt_small
 	icon_state = "cobblestonealt_smalledges"
 
 /turf/open/floor/rogue/cobble/mossy/alt
 	icon_state = "mossyalt1"
-
+	canSmoothWith = FALSE
+	smooth = SMOOTH_FALSE
 /turf/open/floor/rogue/cobble/mossy/alt/Initialize()
 	. = ..()
 	icon_state = "mossyalt[rand(1,3)]"
 
-/obj/effect/decal/cobbleedge/mossy
+/obj/effect/decal/turfedge_neu/mossy
 	icon_state = "mossyalt_edges"
 
-/obj/effect/decal/cobbleedge/mossy_small
+/obj/effect/decal/turfedge_neu/mossy_small
 	icon_state = "mossyalt_smalledges"
 
+/obj/effect/decal/turfedge_neu/road
+	icon_state = "roadedges_manual1"
+/obj/effect/decal/turfedge_neu/road/Initialize()
+	icon_state = "roadedges_manual[rand(1,2)]"
+	. = ..()
 
+/obj/effect/decal/turfedge_neu/road_big
+	icon_state = "roadedges_manual_34"
 
+// ==============================================================
 /*	..................   Miscellany   ................... */
 /turf/open/floor/rogue/tile/masonic
 	icon_state = "masonic"
@@ -1191,6 +1297,73 @@
 /turf/open/floor/rogue/plank/h
 	icon_state = "plank2"
 
+/*	..................   Misc   ................... */
+/turf/open/floor/rogue/ruinedwood/darker // here problem was opposite, too bright wood for bandit lair
+	color = "#d9c9b0"
+/turf/open/floor/rogue/ruinedwood/turned/darker
+	color = "#d9c9b0"
+
+/turf/open/floor/rogue/tile/kitchen // faded kitchen, too dark floors look bad IMO, this much nicer
+	icon_state = "tavern"
+
+
 /turf/open/floor/rogue/tile/checker_green
 	icon_state = "tile"
 	color = "#94df5b"
+
+/turf/open/water/bath/pool
+	desc = "Clear water, pleasant temperature. Soothing."
+	icon_state = "bathtile_pool"
+/turf/open/water/bath/pool/Initialize()
+	.  = ..()
+	icon_state = "bathtile_pool"
+
+/turf/open/water/bath/pool/mid
+	icon_state = "bathtile_pool_mid"
+/turf/open/water/bath/pool/mid/Initialize()
+	.  = ..()
+	icon_state = "bathtile_pool_mid"
+/*	................................................ */
+
+
+/*	..................   Kaizoku Sand   ................... */
+/turf/open/floor/rogue/sand
+	icon = 'icons/roguetown/kaizoku/tileset/tileset.dmi'
+	icon_state = "sand1"
+	footstep = FOOTSTEP_SAND
+	barefootstep = FOOTSTEP_SOFT_BAREFOOT
+	clawfootstep = FOOTSTEP_SAND
+	heavyfootstep = FOOTSTEP_GENERIC_HEAVY
+	landsound = 'sound/foley/jumpland/dirtland.wav'
+	neighborlay = "sandedges"
+	smooth = SMOOTH_TRUE
+	canSmoothWith = list(
+		/turf/closed/mineral/rogue,
+		/turf/closed/mineral,
+		/turf/closed/wall/mineral/rogue/stonebrick,
+		/turf/closed/wall/mineral/rogue/wood,
+		/turf/closed/wall/mineral/rogue/wooddark,
+		/turf/closed/wall/mineral/rogue/stone,
+		/turf/closed/wall/mineral/rogue/stone/moss,
+		/turf/open/floor/rogue/cobble,
+		/turf/open/floor/rogue/dirt,
+		/turf/open/floor/rogue/grass,
+		/turf/open/floor/rogue/grass/red,
+		/turf/open/floor/rogue/grass/yel,
+		/turf/open/floor/rogue/grass/cold,
+		/turf/open/floor/rogue/snow,
+		/turf/open/floor/rogue/snow/patchy,
+		/turf/open/floor/rogue/snow/rough
+	)
+
+/turf/open/floor/rogue/sand/cardinal_smooth(adjacencies)
+	// Apply custom smoothing for sand turfs
+	roguesmooth(adjacencies)
+
+/turf/open/floor/rogue/sand/Initialize()
+	. = ..()
+	icon_state = "sand[rand(1,4)]"
+
+/obj/effect/decal/turfedge_neu/sand
+	icon_state = "sandedge"
+	icon = 'icons/roguetown/kaizoku/tileset/tileset.dmi'

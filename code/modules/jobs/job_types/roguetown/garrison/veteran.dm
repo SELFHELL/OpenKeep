@@ -25,13 +25,13 @@
 
 	outfit = /datum/outfit/job/roguetown/veteran
 	give_bank_account = 50
-	min_pq = 1
+	min_pq = 10
 
 	cmode_music = 'sound/music/combat_guard.ogg'
 
 /datum/outfit/job/roguetown/veteran/pre_equip(mob/living/carbon/human/H)
 	..()
-	head = /obj/item/clothing/head/roguetown/helmet
+	head = /obj/item/clothing/head/roguetown/helmet/nasal
 	pants = /obj/item/clothing/under/roguetown/trou/leather
 	cloak = /obj/item/clothing/cloak/half/vet
 	shirt = /obj/item/clothing/suit/roguetown/shirt/undershirt/guardsecond
